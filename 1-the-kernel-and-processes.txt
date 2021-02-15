@@ -1,0 +1,33 @@
+source: (my notes >> 2020/08/21, 14:46)
+        https://www.thegeekdiary.com/unix-linux-what-is-a-shell-what-are-different-shells/
+
+    In Unix and Unix-like operating systems,
+    an _operating-system (OS) kernel_ is a program
+    that controls all computer operations, i.e. it:
+        
+        (a) coordinates all executing utilities
+        
+        (b) ensures that executing utilities
+            - do not interfere with each other
+            - [do not] consume all system resources
+        
+        (c) schedules and manages all system processes
+
+source: (
+        https://unix.stackexchange.com/questions/152310/how-to-correctly-start-an-application-from-a-shell
+        >> answer by jwm
+        )
+
+    In Unix process management, every process has a parent.
+    The one exception to this is the `init` process
+    which is started by the OS [kernel] at boot.
+
+source: https://en.wikipedia.org/wiki/Init
+
+    Init is typically assigned process identifier 1.
+
+    several additional init implementations have been created, attempting to address
+    design limitations in the traditional versions. These include:
+        - launchd
+        - systemd
+        - and others

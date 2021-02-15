@@ -1,0 +1,85 @@
+source: https://askubuntu.com/questions/184071/what-is-the-purpose-of-the-9-option-in-the-kill-command
+
+    The command `kill` sends the specified signal
+    to the specified process or process group.
+
+    If no signal is specified, the `TERM` signal is sent.
+    The `TERM` signal will kill processes which do not catch this signal.
+
+    For other processes, it may be necessary to use the `KILL` (`9`) signal,
+    since this signal cannot be caught.
+
+    Even though a frozen or unresponsive process may not respond to a ... `TERM` signal,
+    it will die when sent a `KILL` signal
+
+source: https://unix.stackexchange.com/questions/8916/when-should-i-not-kill-9-a-process
+
+    Generally,
+    you should use `kill` (short for `kill -s TERM`, or on most systems `kill -15`)
+    before `kill -9` (`kill -s KILL`)
+    to give the target process a chance to clean up after itself.
+    
+    (Processes can't catch or ignore `SIGKILL`,
+    but they can and often do catch `SIGTERM`.)
+
+    If you don't give the process a chance to finish what it's doing and clean up,
+    it may leave corrupted files (or other state) around
+    that it won't be able to understand once restarted.
+
+source: https://stackoverflow.com/questions/19955260/what-is-dev-null-in-bash
+
+    [question]
+
+        I tried to run an example java program using the following command line...
+        what is the trailing part `< /dev/null &` used for?
+
+        ```
+        java \
+            -cp \
+            /home/weka.jar \
+            weka.classifiers.trees.J48 \
+            –t train_file  \
+            >& log \
+            < /dev/null \
+            &
+        ```
+
+    [answer by Chris Down]
+
+        `< /dev/null` is used to instantly send `EOF` to the program,
+        so that it doesn't wait for input
+
+        (`/dev/null`, the null device, is a special file that
+            discards all data written to it,
+            but reports that the write operation succeeded,
+            and provides no data to any process that reads from it, yielding EOF immediately
+        )
+
+        `&` is a special type of command separator used to background the preceding process.
+
+    [answer by Gilles 'SO- stop being evil']
+
+        `</dev/null` disconnects the program's input from the terminal.
+        Some programs react differently
+        depending on what their standard input is connected to.
+        With the redirection `</dev/null`, the program
+            can tell that its input is not coming from a terminal,
+            and will receive an end-of-file indication immediately if it tries to read from its standard input.
+
+        The lone `&` at the end causes the program to be executed in the background.
+
+        Note that the standalone `&` is unrelated to `>&`. `>&` is a redirection operator.
+
+        what the shell does when it sees this command line is:
+            - Start a process in the background. In the background process:
+                - Connect standard input to `/dev/null` (the null device).
+                - Connect both standard output and standard error
+                  to the file called `log` (creating the file if it doesn't exist yet,
+                  and truncating it if it exists).
+                - Look for an executable file called `java` in the `$PATH`.
+                - Execute that file with the 5 arguments
+                    `-cp`,
+                    `/home/weka.jar`,
+                    `weka.classifiers.trees.J48`,
+                    `–t`,
+                    `train_file`.

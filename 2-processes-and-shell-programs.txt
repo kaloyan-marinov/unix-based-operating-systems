@@ -1,0 +1,67 @@
+source: (
+    https://unix.stackexchange.com/questions/152310/how-to-correctly-start-an-application-from-a-shell
+    >> answer by jwm
+    )
+
+    In Unix process management, [when a parent process dies],
+    it is normal behavior [for that process] to take all [its] child processes with it.
+    This is done by sending the SIGHUP signal to all child processes;
+    the default handling of SIGHUP terminates the [signal-receiving] process.
+
+https://www.computerhope.com/jargon/i/init.htm
+
+    When referring to Linux or Unix, `init` is a program loaded by the kernel
+    [i.e. a process that is started by the kernel at boot]
+    that spawns all(?) other processes [each of which can in turn spawn more processes]
+         (?)[wouldn't this be more precise?][is the direct or indirect ancestor of all other processes]
+    and often uses PID 1.
+
+    `init` is also responsible for
+        (a) rebooting the computer,
+        (b) starting the computer,
+        (c) and shutting the computer down.
+
+source: https://bash.cyberciti.biz/guide/What_is_Linux_Shell
+
+    Computers understand the language of zeros and ones known as binary language.
+    
+    In the early days of computing, instructions were provided using binary language,
+    which is difficult for all of us to read and write.
+
+    Therefore, in an operating system
+    there is a special [category of programs] called [shells]. [A] _shell_ [(program)]
+        (a) accepts human readable commands, and        
+        (b) translates them
+            into something the [OS] kernel can read and process.
+    [However, be advised that mutliple different shell( programs)s exist and are used.]
+
+source: (my notes >> 2020/08/21, 14:46)
+        https://www.thegeekdiary.com/unix-linux-what-is-a-shell-what-are-different-shells/
+
+    In Unix and Unix-like operating systems,
+    a _shell_ is a computer program that
+    provides an interface between a user and an [OS] kernel:
+
+           enables
+         ___________
+        /           \      _______
+    user_____________shell _______ OS kernel
+
+    to execute
+    programs
+    & utilities
+
+source: https://www.thegeekdiary.com/unix-linux-what-is-a-shell-what-are-different-shells/
+
+    An OS [kernel] starts a shell for each user when the user
+        - logs in or
+        - opens a terminal or console window.
+    [However, be advised that those actions may start _different types of shells_.
+    The different types of shells will be described later.]
+
+    The shell also provides a _user environment_ that you can customize using
+    initialization files. These files contain settings for ... characteristics, such as:
+        - Search paths for finding commands.
+        - Default permissions on new files.
+        - Values for variables that other programs use.
+        - Values that you can customize.

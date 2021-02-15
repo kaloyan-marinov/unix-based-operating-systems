@@ -1,0 +1,38 @@
+source: https://unix.stackexchange.com/questions/43385/what-do-you-mean-by-interactive-shell
+
+    An _interactive shell_ is simply any shell process
+    that you use to type commands, and get back output from those commands.
+    That is, a shell with which you interact.
+
+    ...your login shell is interactive,
+    as are any other shells you start manually...
+
+    By contrast, when you run a shell script, a non-interactive shell
+        is started that runs the commands in the script,
+        and then exits when the script finishes.
+
+    Interactive non-login shells
+        (that is, shells you start manually from another shell
+        or [in Linux] by opening a terminal window)
+    don't read your `.login` or `.profile` files.
+
+    [In Linux] These are only read and executed by login shells
+        (shells started by the login system process,
+        or by your X display manager),
+    so the commands and settings they contain are only applied once,
+    at the beginning of your login session.
+
+    So, when you start a terminal [in Linux], the shell that it spawns for you
+        does not read your login files
+        (`.login` for c-style shells, `.profile` for bourne style shells),
+        but it does read the `.cshrc`, `.bashrc`, etc. files.
+
+source: https://unix.stackexchange.com/questions/38175/difference-between-login-shell-and-non-login-shell
+
+    It's rare to run a non-interactive login shell, but some X settings do that when ...
+    Another way to get a non-interactive login shell is to log in remotely with a
+    command passed through standard input which is not a terminal, e.g.
+    `ssh example.com <my-script-which-is-stored-locally`
+    (as opposed to
+    `ssh example.com my-script-which-is-on-the-remote-machine`
+    which runs a non-interactive, non-login shell).

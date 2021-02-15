@@ -1,0 +1,46 @@
+source: https://en.wikipedia.org/wiki/List_of_command-line_interpreters
+
+    [In what follows, we are going to list shell programs that are available on most(?)
+    Unix-like systems.]
+
+            sh (Bourne shell)
+
+                bash (Bash (Unix shell))
+
+                ksh (KornShell)
+
+                    zsh (Z shell)
+
+            fish (Friendly interactive shell)
+
+source: same as above
+
+    In computing, a _command-line interpreter_, or _command language interpreter_,
+    is a blanket term for a certain class of programs
+    designed to read lines of text entered by a user
+    [thus implementing a command-line interface].
+
+    OPERATING SYSTEM SHELLS
+
+        [listed above]
+
+    PROGRAMMING
+
+        Language systems
+
+        Scientific and engineering software
+
+            MATLAB
+
+            Wolfram Mathematica
+
+        Programming languages
+
+            Python
+
+                IPython
+
+            (?) JavaScript shell
+
+                Javascript Interpreter Shell
+                TODO: read https://en.wikipedia.org/wiki/Jsish

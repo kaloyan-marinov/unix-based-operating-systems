@@ -1,0 +1,95 @@
+source: https://en.wikipedia.org/wiki/Init
+
+    [Recall that `init` is a processes that is started by the kernel at boot
+    and is typically assigned PID 1.]
+
+    Init is a _daemon_ process that continues running until the system is shut down.
+
+source: https://en.wikipedia.org/wiki/Daemon_(computing)
+
+    In multitasking computer operating systems,
+    a _daemon_ (/ˈdiːmən/ or /ˈdeɪmən/) is a computer program that runs as a ... process
+    [which is not] under the direct control of an interactive user.
+
+    In a Unix environment,
+    the parent process of a daemon is often, but not always, the init process.
+    A daemon is usually created
+        either by a process forking a child process and then immediately exiting
+        (thus causing init to adopt the child process),
+        or by the init process directly launching the daemon.
+    In addition, a daemon launched by forking and exiting typically must perform other
+    operations, such as dissociating the process from any controlling terminal (tty).
+
+    Systems often start daemons at boot time that will
+        respond to network requests,
+        hardware activity,
+        or other programs by performing some task.
+    Daemons such as `cron` may also perform defined tasks at scheduled times. 
+
+source: https://linuxize.com/post/how-to-run-linux-commands-in-background/
+
+    Typically when you run a command in [an interactive shell session],
+    you have to wait until the command finishes before you can enter a new one.
+    This is called running the command _in the foreground_ or _as a foreground process_.
+
+    What if the command takes a long time to finish,
+    and you want to run other commands in the meantime?
+
+        Option 1: The most obvious and straightforward option is
+                  to start a new shell session and run the command in it.
+
+        Option 2: [Another option is to move a running foreground process _to the background_.]
+                  A _background process_ is a process/command
+                  that ... runs ... without interaction from the user.
+                  [So, a _background process_ means the same as a _daemon (process)_.]
+
+            To move a running foreground process in the background:
+                (a) Stop the process by typing Ctrl+Z.
+                (b) Move the stopped process to the background by typing `bg`.
+
+        Option 3: [Yet] Another option is to run the command _in the background_
+                  [from the get-go].
+
+            To run a command [as a background process (from the get-go)],
+            add the ampersand symbol (`&`) at the end of the command:
+            ```
+            # This will continue to write messages from the `stdout` and `stderr` streams:
+            $ command &
+
+            # But this will suppress messages from the `stdout` and `stderr` streams:
+            $ command > /dev/null 2>&1 &
+            ```
+
+    [Suppose that you have run several commands as background processes
+    in an interactive shell session.]
+    There are several ways
+    to keep the process running after the interactive shell session ends.
+
+        Option 1: One way is to remove the job from the shell’s job control
+                  using the `disown` shell builtin:
+
+            ```
+            $ disown %<job-id-of-the-process>
+            ```
+
+        Option 2: Another way to keep a process running after the shell exit is
+                  to use `nohup`.
+
+                  The `nohup` command
+                    executes another program specified as its argument and
+                    ignores all `SIGHUP` (hangup) signals.
+                  (`SIGHUP` is a signal that is sent to a process
+                  when its controlling terminal is closed.)
+
+            ```
+            $ nohup command &
+
+            $ nohup command > /dev/null 2>&1 &
+            ```
+
+        Option 3: There are a number of programs that allow you
+                  to have multiple interactive sessions at the same time.
+
+            Screen or GNU Screen
+
+            Tmux is a modern alternative to GNU Screen.
