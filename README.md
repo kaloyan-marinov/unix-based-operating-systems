@@ -129,7 +129,7 @@
 
       the result is analogous to that in Scenario 2.1 - namely: ...
 
-# 3. "`nohup` incarnations" of (on macOS + in VS Code integrated terminal)
+# 3. "`nohup` incarnations" of (1. on macOS + in VS Code integrated terminal)
 
 1. Scenario 3.1
 
@@ -176,3 +176,53 @@
       - [the corresponding step from Scenario 1.4] in instance 1, issue `$ kill -KILL $(echo $$)`, which "stops/closes" instance 1
 
       [different from the corresponding observation in Scenario 1.4, the same as the corresponding observation in Scenario 1.1]
+
+# 4. "`nohup` incarnations" of (2. on macOS + the macOS Terminal application)
+
+1. Scenario 4.1
+
+   take the following steps:
+
+      - [the corresponding step from Scenario 2.1]
+
+      - in instance 1, `$ nohup python 7-example/print_numbers.py &> 7-example/log.txt < /dev/null & echo $! > 7-example/pid.txt`
+
+      - [the corresponding step from Scenario 2.1]
+
+      - [the corresponding step from Scenario 2.1]
+
+   [the same as the corresponding observation in Scenario 2.1]
+
+2. Scenario 4.2
+
+   take the following steps:
+
+      - [the corresponding step from Scenario 2.2]
+
+      - ...
+
+      - [the corresponding step from Scenario 2.2]
+
+      - [the corresponding step from Scenario 2.2]
+
+    the remaining instance indicates that the process with the PID stored in `7-example/pid.txt` has halted executing; that process has produced a `7-example/log.txt` file without any content (an empty file)
+
+    [different from the corresponding observation in Scenario 2.2, the same as the corresponding observation in Scenario 2.1]
+
+3. Scenario 4.3
+
+    Choose not to try this out as "`nohup` incarnation" of Scenario 2.3, because that scenario does not "stop/close" instance 1.
+
+4. Scenario 4.4
+
+    take the following steps:
+
+      - [the corresponding step from Scenario 2.4]
+
+      - ...
+
+      - [the corresponding step from Scenario 2.4]
+
+      - [the corresponding step from Scenario 2.4]
+
+      [different from the corresponding observation in Scenario 2.4, the same as the corresponding observation in Scenario 2.1]
