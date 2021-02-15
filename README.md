@@ -128,3 +128,51 @@
       indicating that the command, at least in some sense, "stops/closes" instance 1
 
       the result is analogous to that in Scenario 2.1 - namely: ...
+
+# 3. "`nohup` incarnations" of (on macOS + in VS Code integrated terminal)
+
+1. Scenario 3.1
+
+   take the following steps:
+
+      - [the corresponding step from Scenario 1.1]
+
+      - in instance 1, `$ nohup python 7-example/print_numbers.py &> 7-example/log.txt < /dev/null & echo $! > 7-example/pid.txt`
+
+      - [the corresponding step from Scenario 1.1]
+
+      - [the corresponding step from Scenario 1.1]
+
+   [the same as the corresponding observation in Scenario 1.1]
+
+2. Scenario 3.2
+
+   take the following steps:
+
+      - [the corresponding step from Scenario 1.2]
+
+      - ...
+
+      - [the corresponding step from Scenario 1.2]
+
+      - [the corresponding step from Scenario 1.2]
+
+    [different from the corresponding observation in Scenario 1.2, the same as the corresponding observation in Scenario 1.1]
+
+3. Scenario 3.3
+
+    Choose not to try this out as "`nohup` incarnation" of Scenario 1.3, because that scenario does not "stop/close" instance 1.
+
+ 4. Scenario 3.4
+
+    take the following steps:
+
+      - [the corresponding step from Scenario 1.4]
+
+      - ...
+
+      - [the corresponding step from Scenario 1.4]
+
+      - [the corresponding step from Scenario 1.4] in instance 1, issue `$ kill -KILL $(echo $$)`, which "stops/closes" instance 1
+
+      [different from the corresponding observation in Scenario 1.4, the same as the corresponding observation in Scenario 1.1]
