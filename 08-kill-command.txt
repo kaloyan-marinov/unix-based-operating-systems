@@ -1,0 +1,27 @@
+source: https://askubuntu.com/questions/184071/what-is-the-purpose-of-the-9-option-in-the-kill-command
+
+    The command `kill` sends the specified signal
+    to the specified process or process group.
+
+    If no signal is specified, the `TERM` signal is sent.
+    The `TERM` signal will kill processes which do not catch this signal.
+
+    For other processes, it may be necessary to use the `KILL` (`9`) signal,
+    since this signal cannot be caught.
+
+    Even though a frozen or unresponsive process may not respond to a ... `TERM` signal,
+    it will die when sent a `KILL` signal
+
+source: https://unix.stackexchange.com/questions/8916/when-should-i-not-kill-9-a-process
+
+    Generally,
+    you should use `kill` (short for `kill -s TERM`, or on most systems `kill -15`)
+    before `kill -9` (`kill -s KILL`)
+    to give the target process a chance to clean up after itself.
+    
+    (Processes can't catch or ignore `SIGKILL`,
+    but they can and often do catch `SIGTERM`.)
+
+    If you don't give the process a chance to finish what it's doing and clean up,
+    it may leave corrupted files (or other state) around
+    that it won't be able to understand once restarted.

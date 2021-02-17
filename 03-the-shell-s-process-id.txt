@@ -1,0 +1,19 @@
+source: https://askubuntu.com/questions/596420/whats-the-shell-session
+
+    `$$` is the environment variable for the shell's process ID
+
+    To see your current shell along with
+        its process ID,
+        the process ID of parents,
+        and the process ID of current command,
+    use:
+    ```
+    $ pstree -aps $$
+    systemd,1 splash fastboot kaslr
+    └─lightdm,1050
+        └─lightdm,1294 --session-child 12 19
+            └─upstart,1883 --user
+                └─gnome-terminal-,10481
+                    └─bash,3612
+                        └─pstree,15684 -aps 3612
+    ```
