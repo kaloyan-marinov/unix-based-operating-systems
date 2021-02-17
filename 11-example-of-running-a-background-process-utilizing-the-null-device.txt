@@ -1,4 +1,4 @@
-source: https://stackoverflow.com/questions/19955260/what-is-dev-null-in-bash
+source: https://unix.stackexchange.com/questions/27955/the-usage-of-dev-null-in-the-command-line
 
     [question]
 
@@ -56,6 +56,6 @@ source: https://stackoverflow.com/questions/19955260/what-is-dev-null-in-bash
                     `–t`,
                     `train_file`.
 
-source: the last comment in the previous source
+source: https://stackoverflow.com/questions/19955260/what-is-dev-null-in-bash
 
     [`/dev/null` is also] often used to daemonize processes ([Step] 6 of [the recommended approach for creating well-behaved daemons]( https://web.archive.org/web/20120914180018/http://www.steve.org.uk/Reference/Unix/faq_2.html#SEC16 )) 
