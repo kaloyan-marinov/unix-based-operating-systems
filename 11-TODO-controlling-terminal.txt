@@ -1,0 +1,30 @@
+https://unix.stackexchange.com/questions/58186/concept-of-controlling-terminal-in-unix
+
+    links to "The TTY demystified"
+
+    ---
+
+    There is a process group leader - sort of like the head process - that owns the terminal, /dev/tty.
+
+https://unix.stackexchange.com/questions/405755/is-it-the-process-that-has-a-controlling-terminal-or-is-it-the-session-that-has
+
+    links to "The TTY demystified"
+
+    ---
+
+    It is indeed the session that has a controlling terminal
+
+    The _Single UNIX Specification_ describes the relationship in terms of the _controlling terminal_ being "associated with a session". As it goes on to specify, a controlling terminal has a 1:1 relationship with a session. There is "at most one controlling terminal" associated with a session, and "a controlling terminal is associated with exactly one session".
+
+    links to a pretty short http://poincare.matf.bg.ac.rs/~ivana/courses/ps/sistemi_knjige/pomocno/apue/APUE/0201433079/ch09lev1sec6.html
+
+https://unix.stackexchange.com/questions/352442/process-without-a-controlling-terminal
+
+    links to "the standard [which] has the details if you like" - http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap11.html
+
+    links to a long but perhaps-worth-a-quick-read-without-getting-bogged-down-in-details
+    https://unix.stackexchange.com/questions/351061/does-keyboard-input-always-go-through-a-controlling-terminal/351064#351064
+
+https://superuser.com/questions/1375395/how-do-i-detach-from-a-controlling-terminal-from-the-command-line
+
+Q: does there exist a notion of a "controlling shell" and, if yes, how does it relate to the certainly-existing notion of a "controlling terminal"?

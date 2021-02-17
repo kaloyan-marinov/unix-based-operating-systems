@@ -1,0 +1,34 @@
+without `nohup` - hinting that Unix signals should be my next investigation
+(
+prerequisite: `shopt | grep login_shell`
+)
+
+	https://serverfault.com/questions/115999/if-i-launch-a-background-process-and-then-log-out-will-it-continue-to-run
+
+	https://serverfault.com/questions/117152/do-background-processes-get-a-sighup-when-logging-off
+
+		introduces `shopt | grep huponexit`
+
+
+seems to somewhat duplicate (but also build onto) the previous link
+
+	https://unix.stackexchange.com/questions/84737/in-which-cases-is-sighup-not-sent-to-a-job-when-you-log-out
+
+		introduces `shopt | grep checkjobs`
+		[which, on macOS, doesn't work;
+		results in `-bash: shopt: checkjobs: invalid shell option name`]
+
+		talks about SSH, in a cursory but good-enough-for-now manner
+
+		links to the brief but informative http://lists.gnu.org/archive/html/bug-bash/2009-03/msg00091.html
+
+https://serverfault.com/questions/115968/ssh-session-drops-does-the-command-continue-executing
+
+	already has answers here:
+	https://serverfault.com/questions/463366/does-getting-disconnected-from-an-ssh-session-kill-your-programs
+
+	"actually ispired ... the question" located at the first link within this file
+
+	focuses more heavily on SSH and systemd
+
+	culminates with a recommendation that one should use virtual terminal solutions like `tmux` and the older `screen` which create sessions which continue running even if you are disconnected, and to which you can reattach later.

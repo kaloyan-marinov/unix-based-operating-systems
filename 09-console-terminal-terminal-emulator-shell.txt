@@ -1,0 +1,84 @@
+source: https://www.unixsheikh.com/articles/the-terminal-the-console-and-the-shell-what-are-they.html
+
+The terminal and the console
+
+    Early computers where huge machines that consisted of multiple cabinets
+
+    The "console" was the "control console".
+
+    The word terminal comes from the Latin "terminus", meaning "an end..."
+        (
+        You will sometimes hear the description "a dumb terminal" when referring to a text-based environment where the computer is _just taking input and showing text_ while the real work happens at the other end, typically in a _mainframe_.
+        )
+
+    The _teleprinter_ or _TTY_ was the first kind of terminal.
+
+        Rather than a monitor you would have a literal typewriter in front of you. When you typed on it, you would see the text on a piece of paper and that text would be send to the computer. When the computer replied, you would see the typewriter print on the paper.
+
+        Some models could also be used to create punched tape for data storage (either from typed input or from data received from a remote source) and to read back such tape for local printing or transmission.
+
+    Later, as computers became much smaller, it was possible to integrate multiple components into one single unit, with both a video monitor and a keyboard put together inside it
+
+        the physical video terminal ... replaced both the teleprinter and the old control console
+
+        the "console" ... became more or less synonymous to the "terminal".
+
+        Both the "console" and the "terminal" now referred to the physical video terminal
+
+    The video terminal provides a way for the kernel and other processes:
+        (a) to send text output on the monitor to the user, and
+        (b) to receive text input from the user via the keyboard.
+
+    Today, in the software world, "console" and "terminal" has become completely synonymous.
+
+    The virtual terminal
+
+        A virtual terminal or virtual console is a program that simulates a physical terminal. For example, both the Linux kernel and BSD kernels support virtual terminals - terminals that are logically separate, but which access the same physical keyboard and monitor.
+
+        The virtual terminal gives the impression that several independent terminals are running concurrently. Each virtual terminal can be logged in with a different user and it can run its own shell and have its own font settings. The virtual terminals each use a device /dev/ttyX, and you can switch between them by pressing Alt+FX (where X is equal to the virtual terminal number, beginning with 1).
+
+The terminal emulator
+
+    Emulation refers to the ability of a computer program to emulate, i.e. imitate, another program or device. A terminal emulator is a computer program that
+        emulates a physical terminal
+        [whose purpose] is to allow access to the command line
+    while working in a graphical user interface, such as the X Window System.
+
+    The terminal emulator takes the input you type at the keyboard and convert those to ASCII characters which it sends to the shell, or to a program running under the shell (more about the shell later). The terminal emulator also takes the stream of output characters from the various programs you run via the shell and displays them on the monitor.
+
+    Since the shell is "expecting" to interface with a human through a terminal, and we don't use a physical terminal while in a graphical environment, we need the terminal emulator.
+
+Terminal multiplexer
+
+    A terminal multiplexer can be thought of as a console based version of a graphical window manager, or as a way of putting virtual terminals into any login session. It is a wrapper that allows multiple terminal based programs to run at the same time, and it provides features that allow the user to use the programs within a single interface productively. This enables some of the following features: persistence, multiple windows, and session sharing.
+
+The shell
+
+    The operating system is the interface between the user and the hardware.
+
+    The kernel is the "core" of the operating system that controls and handles all the tasks of the system
+    while the shell is the "interface" that provides users access to communication with the kernel.
+
+    A shell process is the program that prompts you for input, takes your commands, and runs them for you. It is a computer program that serves as a command-line interpreter. The shell implements a read-eval-print loop (REPL).
+
+    A shell hides the details of the underlying operating system and manages the technical details of the operating system kernel ..., which is the lowest-level, or "inner-most" component of most operating systems.
+
+    When you login to your Unix-like operating system you are located in the shell. What you see is the input prompt. You enter commands at this input prompt and the shell acts as a "command interpreter". The shell takes each command and passes it to the operating system kernel to handle. The shell then parses the result of this action back to the terminal.
+
+    Operating system shells use
+        either a command-line interface (CLI), i.e. a terminal,
+        or graphical user interface (GUI), i.e. a terminal emulator,
+    depending on a computer's role and particular operation.
+    It is named a shell because it is the outermost layer around the operating system [kernel].
+
+    The shell knows nothing
+        about displaying characters on the monitor or
+        about handling input keystroke codes from the keyboard
+    - that is up to the hardware and software that is implementing the terminal.
+    That is why we interact with the shell using the terminal, however, direct operation via serial hardware connections or Secure Shell are common for server systems.
+
+What shell should I use?
+
+    I recommend that you develop your scripts according to the POSIX standard rather than something specific like Bash.
+    Using POSIX will help ensure that your scripts can run on most systems...
+    You can use the tool ShellCheck (a shell script static analysis tool - https://github.com/koalaman/shellcheck#user-content-installing ) to find bugs or "bashisms" in your scripts.
