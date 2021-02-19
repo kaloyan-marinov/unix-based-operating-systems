@@ -10,32 +10,6 @@ source: https://stackoverflow.com/questions/6548823/use-and-meaning-of-session-a
 
     The [POSIX.1-2008 standard]( http://pubs.opengroup.org/onlinepubs/9699919799/ ) is fairly readable (at least, I think so!) - take a look at the [definitions]( http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap03.html ) and the relevant sections of the ["General Terminal Interface"]( http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap11.html#tag_11 ) chapter.
 
-source: https://unix.stackexchange.com/questions/394709/how-to-return-the-currently-active-user-session-on-a-graphical-linux-desktop-ses
-
-    [This answer applies to Linux but not to macOS.]
-
-    On many current distributions, login sessions (graphical and non-graphical) are managed by `logind`. You can list sessions using
-    ```
-    loginctl list-sessions
-    ```
-    and then display each session’s properties using
-    ```
-    loginctl show-session ${SESSIONID}
-    ```
-    or
-    ```
-    loginctl session-status ${SESSIONID}
-    ```
-    (replacing `${SESSIONID}` as appropriate); the difference between the two variants is that `show-session` is designed to be easily parsed, `session-status` is designed for human consumption.
-
-    [
-    Issue
-    ```
-    man systemd-logind
-    ```
-    which is called a "Login manager", and read the documentation.
-    ]
-
 source: https://unix.stackexchange.com/questions/18166/what-are-session-leaders-in-ps
 
     I thought I knew the answer to this, but I wrote a C program to figure this out.
