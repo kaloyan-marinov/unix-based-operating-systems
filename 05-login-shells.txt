@@ -31,7 +31,7 @@ source: https://help.gnome.org/users/gnome-terminal/stable/pref-login-shell.html
 
 source: https://www.linuxquestions.org/questions/programming-9/how-to-check-in-a-script-whether-the-shell-is-login-or-non-login-360629/
 
-     How to check ... whether the shell is login or non login?
+     How to check ... whether the shell is login or non-login?
 
      If using bash, try :
      ```
@@ -64,6 +64,30 @@ source: https://unix.stackexchange.com/questions/38175/difference-between-login-
     you don't get a login shell,
     instead you get a session manager or a window manager.
 
+    TODO: read
+
+            https://linuxhandbook.com/login-shell/
+            starts off where the previous remark left off
+            but connects also to the following,
+            which is more fundamental than the previous remark:
+            https://www.linuxnix.com/how-login-process-work-in-linux/
+
+    https://www.freedesktop.org/software/systemd/man/org.freedesktop.login1.html
+    explains that
+    `Type` encodes the session type. It's one of
+        "`unspecified`" (for cron PAM sessions and suchlike),
+        "`tty`" (for text logins)
+        or "`x11`"/"`mir`"/"`wayland`" (for graphical logins).
+    Combining this with https://unix.stackexchange.com/questions/202891/how-to-know-whether-wayland-or-x11-is-being-used
+    means that the following command helps us determine which sessions are text-based
+    or graphical:
+        ```
+        loginctl
+        loginctl list-sessions
+
+        loginctl show-session ${SESSIONID} | grep Type
+        ```
+    (replacing `${SESSIONID}` as appropriate)
     ---
 
     The program that starts the shell decides whether the shell acts as a login shell.

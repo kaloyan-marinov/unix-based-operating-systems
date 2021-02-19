@@ -1,0 +1,17 @@
+Unix vs Linux, from briefest to most comprehensive:
+
+    (have read quickly) https://askubuntu.com/questions/183723/whats-the-difference-between-unix-linux-and-ubuntu
+
+    (have read quickly) https://askubuntu.com/questions/730384/what-is-system-v-in-ubuntu
+
+    (have read quickly) https://www.unixmen.com/linux-vs-unix-how-is-unix-different-from-linux/
+
+    (have not even skimmed through) https://www.softwaretestinghelp.com/unix-vs-linux/
+
+Why `init` needed to be replaced with `systemd` in Linux
+
+    (have not even skimmed through) https://www.tecmint.com/systemd-replaces-init-in-linux/
+
+The myths about malware in Unix / Linux - it's certainly possible to have viruses under Unix and Unix-like operating systems such as Linux.
+
+    (have not even skimmed through) https://unix.stackexchange.com/questions/2751/the-myths-about-malware-in-unix-linux/2780#2780

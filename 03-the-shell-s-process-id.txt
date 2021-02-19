@@ -17,3 +17,9 @@ source: https://askubuntu.com/questions/596420/whats-the-shell-session
                     └─bash,3612
                         └─pstree,15684 -aps 3612
     ```
+
+    [If you have used the Terminal application to open two windows,
+    issuing `$ pstree -aps $$` in each shows that
+    both shell processes have the same parent process.
+    That parent is a `gnome-terminal-` process.
+    Issuing `kill 3789` in either shell process closes both windows.]

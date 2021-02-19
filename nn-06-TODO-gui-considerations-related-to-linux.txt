@@ -1,0 +1,26 @@
+source: https://linuxconfig.org/ubuntu-20-04-gui-installation
+
+    Install GUI [on Ubuntu 20.04]
+
+source: https://linuxconfig.org/start-gui-from-command-line-on-ubuntu-20-04-focal-fossa
+
+    Start GUI from command line on Ubuntu 20.04
+
+source: https://askubuntu.com/questions/180628/how-can-i-logout-from-the-gui-using-cli
+
+    To end all user processes and be sent back to the login screen, you can use:
+    ```
+    kill -9 -1
+    ```
+    Don't run it as root though, for reasons discussed [here]( https://web.archive.org/web/20111003064049/http://aarklonlinuxinfo.blogspot.com/2008/07/kill-9-1.html ).
+
+
+source: https://stackoverflow.com/questions/2296567/make-a-linux-gui-in-the-command-line
+
+    [How to create a pgroam that,
+    when run on Linux, provides a text-based UI.]
+
+source: https://build-system.fman.io/linux-gui-programming
+
+    [How to create a Python program that,
+    when run on Linux, provides/displays a GUI.]

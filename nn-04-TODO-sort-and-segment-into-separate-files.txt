@@ -1,0 +1,31 @@
+source: https://linuxize.com/post/linux-nohup-command/
+
+    This is "operationally oriented/focused" follow-up on https://linuxize.com/post/how-to-run-linux-commands-in-background/ (which has been referenced already in this repository).
+
+source: https://linuxize.com/post/ps-command-in-linux/
+
+    TBD
+
+source: https://www.howtogeek.com/413213/how-to-kill-processes-from-the-linux-terminal/
+
+    TBD
+
+source: https://www.oreilly.com/library/view/learning-the-unix/1565923901/ch01s04.html
+
+    This article mentions the concept of a "UNIX session"; might contain neat details to add before, during, or after the article by the "unixmen" website which is already referenced in this repository.
+
+source: https://linuxcommand.org/lc3_lts0010.php
+
+    This article is brief; summarizes key points from earlier articles; might prepare the reader for the one after next.
+
+source: https://www.howtogeek.com/428174/what-is-a-tty-on-linux-and-how-to-use-the-tty-command/
+
+    This article is brief; easy to follow; provides a bit of history; provides easy-to-try examples of interacting with (the operating system by means of) a shell interface; and should prepare the reader for the next one.
+
+source: (not HTTPS!) http://www.linusakesson.net/programming/tty/index.php
+
+    This article is quite long; very detailed; provides a lot of history; walks through the nitty-gritty details taking place "behind the scenes" in several examples of a user's interacting with the operating system (you can try these examples, but my impression is that the real value is instead the detailed descripton of what is taking place "behind the scenes").
+
+    The "An example" section requires operational knowledge of creating and working with foreground and background processes; additionally, would be easier to discern its _main actors_ if the preceding sections were _skimmed_ first.
+
+    At present, I don't understand what makes the "Flow control and blocking I/O" section important, so I am going to ignore it for the time being.
