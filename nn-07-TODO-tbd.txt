@@ -1,0 +1,51 @@
+source: https://www.debian.org/doc/manuals/debian-reference/ch07.en.html
+            http://www.xwinman.org/
+            https://www.debian.org/doc/manuals/debian-reference/ch01.en.html
+                https://www.debian.org/doc/manuals/debian-reference/
+
+    [This is a lengthy book. Based on reading Chapter 7 (The X Window System),
+    I think the book is quite well-written and easy to read.]
+
+    This Debian Reference (version 2.77) (2021-01-10 06:32:51 UTC) is intended to
+    provide a broad overview of the Debian system as a post-installation user's guide.
+    It covers many aspects of system administration through shell-command examples for
+    non-developers.
+
+source: https://www.linuxnix.com/how-login-process-work-in-linux/
+
+    How [does the] login process work in Linux?
+
+    Today we will see one basic concept, which is neglected by many Linux users
+    if they are not programmers like system admins.
+    [The] question is "What happens [during] a login process in Linux?"
+
+    [While] many people are familiar with the Linux booting process,
+    in which the `init` process will [be started by the OS kernel at boot],
+    in this post we will see what happens
+    after the `init` process completes executing `/etc/rc.local` file
+    and until we get a `PS1` prompt (so that we can start executing our desired
+    commands).
+    
+    An overview of login process
+
+        `init` [starts a] `getty` process
+
+        the `getty` process [runs] the `login` command
+
+        the `login` process tries to check user credentials
+        
+        [
+        the `getty` read shell property files
+
+        the `getty` [starts a] user "shell" process
+        ]
+
+        the `getty` provides you with a `PS1` prompt
+
+source: https://www.informit.com/articles/article.aspx?p=397655&seqNum=6
+        is an excerpt from the following book.
+        https://www.amazon.com/Linux-Application-Development-paperback-2nd/dp/0321563220
+        The former makes the latter seem like a promising reference/guidebook.
+
+        https://www.amazon.com/Linux-Programming-Interface-System-Handbook/dp/1593272200/ref=sr_1_1?dchild=1&keywords=linux+application+development&qid=1613742972&s=books&sr=1-1
+        also seems like a promising reference/guidebook.

@@ -32,3 +32,12 @@ source: https://www.unixmen.com/non-login-shell-login-shell/#
         So, since the desktop is NOT the only interface to interact with the system, there are several GUIs [available and you] are free to use [whichever one] you want — if you want and when you want. For example, [A Linux machine running a  "webserver process" (= one that serves a web application) does] not utilize [a GUI] at all because there is no reason for such software.
 
     To sum up, there are two different kinds of shells in Linux: Login Shell and Non-Login Shell. Normally, Linux boots you into a Login Shell by default; [after] you [have] logged in, you are [in] a Non-Login Shell. Pretty simple and easy explanation.
+
+In this file, we have mentioned one term without defining it: "X server".
+That is part of the "X Window System" which is the standard windowing system on
+Unix systems. Unfortunately, this in turn begs the question about what a
+"windowing system" is.
+
+We are going to postpone defining those terms for the moment.
+In the meantime, we are going to expand on the comparison between
+a non-login shell and a login shell.

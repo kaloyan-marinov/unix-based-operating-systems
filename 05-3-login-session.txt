@@ -1,0 +1,23 @@
+source: https://en.wikipedia.org/wiki/Session_(computer_science)
+
+    In computer science and networking in particular,
+    a _session_ is a temporary and interactive information interchange
+    between two or more communicating devices,
+    or between a computer and user (see _login session_).
+    
+    A session is established at a certain point in time,
+    and then ‘torn down’ - brought to an end - at some later point.
+    
+    An established communication session may involve more than one message in each
+    direction.
+    
+    A session is typically _stateful_, meaning that at least one of the communicating
+    parties needs to hold current state information and save information about the
+    session history in order to be able to communicate,
+    as opposed to _stateless_ communication,
+    where the communication consists of independent requests with responses.
+
+source: https://en.wikipedia.org/wiki/Login_session
+
+    In computing, a _login session_ is the period of activity between
+    a user logging in and logging out of a (multi-user) system.

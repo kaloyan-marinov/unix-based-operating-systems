@@ -18,13 +18,30 @@ source: https://linuxcommand.org/lc3_lts0010.php
 
     This article is brief; summarizes key points from earlier articles; might prepare the reader for the one after next.
 
+source: https://mostlylinux.wordpress.com/troubleshooting/ttysessions/
+
+    [This is an excerpt from the linked article; is easy to follow; and should prepare the reader for the next one.]
+
+    What is the history of TTY?
+
+    TTY stands for TeleTYpe, a very old piece of equipment used to interact with computers before monitors and keyboards were developed. The operator sat at a large mechanical typing console with a box of pin-feed paper attached. What was typed and sent to the computer was visible in the same area where typing was seen on a conventional typewriter. When Enter or Enter and Carriage Return was pressed the command was sent to the mainframe or the minicomputer, and the output or response from the computer would appear typed out back on the TTY.
+
+    The reader may have seen this technology in movies set in that period, and the experience was even carried on with television displays typically known as CRT after the Cathode Ray Tube that displayed the image. In this example, the computers output or response was shown on the screen appearing one character at a time, often accompanied by the sound of a mechanical TTY. That depiction was largely fictitious and meant to be a dramatic portrayal of a person interacting with a computer.
+
+    Continuing this capability but brought up to date on current computers, particularly those running Unix or Linux operating systems, one will find Command Line Interface or CLI screens where following logging in, the operator types commands or multiple commands strung together either by hand or from a file known as a script that contains that string already typed and saved.
+
+    This capability is also found in the Graphic User Interface or GUI environment where windows can be opened on the screen looking like contained smaller versions of the full-screen CLI.
+
+    In each case, this command environment is called a TTY, or more specifically a PTTY for Pseudo teletype indicating that it’s simply a duplication of the functionality provided by those early devices.
+    — by Frank Pirrone
+
 source: https://www.howtogeek.com/428174/what-is-a-tty-on-linux-and-how-to-use-the-tty-command/
 
-    This article is brief; easy to follow; provides a bit of history; provides easy-to-try examples of interacting with (the operating system by means of) a shell interface; and should prepare the reader for the next one.
+    This article is brief; is easy to follow; provides a bit of history; provides easy-to-try examples of interacting with (the operating system by means of) a shell interface; and should prepare the reader for the next one.
 
 source: (not HTTPS!) http://www.linusakesson.net/programming/tty/index.php
 
-    This article is quite long; very detailed; provides a lot of history; walks through the nitty-gritty details taking place "behind the scenes" in several examples of a user's interacting with the operating system (you can try these examples, but my impression is that the real value is instead the detailed descripton of what is taking place "behind the scenes").
+    This article is titled "The TTY demystified"; is quite long; is very detailed; provides a lot of history; walks through the nitty-gritty details taking place "behind the scenes" in several examples of a user's interacting with the operating system (you can try these examples, but my impression is that the real value is instead the detailed descripton of what is taking place "behind the scenes").
 
     The "An example" section requires operational knowledge of creating and working with foreground and background processes; additionally, would be easier to discern its _main actors_ if the preceding sections were _skimmed_ first.
 

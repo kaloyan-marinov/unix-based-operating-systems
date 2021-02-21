@@ -1,0 +1,13 @@
+source: https://en.wikipedia.org/wiki/Login_session
+
+    On Unix and Unix-like operating systems,
+    a login session takes one of two main forms:
+
+        (a) When a textual user interface is used,
+            a login session is represented as a _kernel session_
+            — a collection of _process groups_ with the logout action managed by a
+            _session leader_.
+        
+        (b) Where an _X display manager_ is employed,
+            a login session is considered to be
+            the lifetime of a designated user process that the display manager invokes.

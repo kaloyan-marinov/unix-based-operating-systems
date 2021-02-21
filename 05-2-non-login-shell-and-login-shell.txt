@@ -51,6 +51,10 @@ source: https://unix.stackexchange.com/questions/38175/difference-between-login-
 
     † I'm simplifying a little, see the manual for the gory details. 
 
+    TODO: read
+        https://linuxhandbook.com/login-shell/
+        which seems to present more (though probably not all) of "the gory details"
+
     ---
 
     [Both in Linux and in macOS,](?) When you log in
@@ -63,16 +67,6 @@ source: https://unix.stackexchange.com/questions/38175/difference-between-login-
     When you log in in graphical mode (on an X display manager),
     you don't get a login shell,
     instead you get a session manager or a window manager.
-
-    (include "sign posting" here)
-
-    TODO: read
-
-            https://linuxhandbook.com/login-shell/
-            starts off where the previous remark left off
-            but connects also to the following,
-            which is more fundamental than the previous remark:
-            https://www.linuxnix.com/how-login-process-work-in-linux/
 
     ---
 
@@ -157,3 +151,19 @@ https://unix.stackexchange.com/questions/324359/why-a-login-shell-over-a-non-log
         This is a somewhat different model from the one I have described above,
         and may require the user to rethink what he does in his `.login` or `.profile`
         (or whatever) file.
+
+In this file, we have mentioned two term without defining them:
+"session manager" and "window manager".
+
+We are going to postpone defining those terms for the moment.
+But we are going to immediately do a quick reality check based on the fact that
+there exists an entire category of programs called "session managers":
+Although we have been using and understanding the term "session" on an intuitive level,
+we have not actually defined that either.
+
+What we are going to do next is to correct that omission, i.e.
+we are going to give precise definitions of the terms "session" and "login session".
+Those definitions will enable us to describe what takes place "behind the scenes"
+when a user logs in in graphical mode to a Unix-like operating system.
+That understanding will in turn allows us to describe the main ways
+in which a "login session" is represented in a Unix-like operating system.
