@@ -1,0 +1,16 @@
+https://serverfault.com/questions/463366/does-getting-disconnected-from-an-ssh-session-kill-your-programs?answertab=votes#tab-top
+
+https://serverfault.com/questions/115968/ssh-session-drops-does-the-command-continue-executing
+
+    hasn't each of the following been rendered inaccurate
+    by what the previous source called "the systemd v230 debacle"?
+    https://serverfault.com/a/183363
+    https://serverfault.com/a/115980
+
+source: https://serverfault.com/questions/117152/do-background-processes-get-a-sighup-when-logging-off
+
+    `strace` exists on Linux (speciically on Ubuntu 18.04) but not on macOS
+
+    the answer by @Kyle and the comments on it indicate that
+    the results depend on the shell instance (BASH vs ZSH)
+    which is used to issue the commands in question
