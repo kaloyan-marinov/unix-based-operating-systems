@@ -1,11 +1,214 @@
-https://serverfault.com/questions/463366/does-getting-disconnected-from-an-ssh-session-kill-your-programs?answertab=votes#tab-top
+source: https://linuxize.com/post/how-to-run-linux-commands-in-background/
 
-https://serverfault.com/questions/115968/ssh-session-drops-does-the-command-continue-executing
+    If your connection drops or you log out of the shell session,
+    the background processes are terminated.
+    
+    There are several ways
+    to keep the process running after the interactive shell session ends.
 
-    hasn't each of the following been rendered inaccurate
-    by what the previous source called "the systemd v230 debacle"?
-    https://serverfault.com/a/183363
-    https://serverfault.com/a/115980
+        One way is
+        to remove the job from the shell’s job control using the `disown` shell builtin
+
+        Another way to keep a process running after the shell exit is to use `nohup`.
+        The `nohup` command executes another program specified as its argument
+        and [the so-created process] ignores all `SIGHUP` (hangup) signals.
+        `SIGHUP` is a signal that is sent to a process
+        when its controlling terminal is closed.
+
+source: https://linuxize.com/post/linux-nohup-command/
+
+    Using `nohup` in the foreground is not very useful
+    because you won’t be able to interact with the shell until the command completes.
+
+source: https://serverfault.com/questions/463366/does-getting-disconnected-from-an-ssh-session-kill-your-programs
+
+    Q by fregas:
+
+        So, say I get disconnected from an SSH-session
+        after I've started `rsync` or `cp` or any other command that can be long running.
+        After I get disconnected, does that command keep running until it's finished ...
+        or does it just get killed?
+
+    A by Andrew B:
+
+        Edit for 2016:
+
+        This Q&A predates the [systemd v230 debacle]( https://soylentnews.org/article.pl?sid=16/05/30/0235207 ).
+            [which in turn links to https://lobste.rs/s/zr7qo4/systemd_kills_background_processes ]
+        As of systemd v230,
+        the new default is to kill all children of a terminating login session,
+        regardless of what historically valid precautions were taken to prevent this.
+        The behavior can be
+            changed by setting `KillUserProcesses=no` in `/etc/systemd/logind.conf`,
+            or circumvented using the systemd-specific mechanisms for starting a daemon
+            in userspace.
+        Those mechanisms are outside the scope of this question.
+
+        ---
+
+        [
+        The text below describes how things have traditionally worked in UNIX
+        designspace for longer than Linux has existed.
+        ]
+
+        They will get killed, but not necessarily immediately.
+        It depends on how long it takes for the SSH daemon
+        to decide that your connection is dead.
+        What follows is a longer explanation that will help you understand
+        how it actually works.
+
+        When you logged in,
+        the SSH daemon allocated a pseudo-terminal for you
+        and attached it to your user's configured login shell.
+        This is called the controlling terminal.
+        Every program you start normally at that point,
+        no matter how many layers of shells deep,
+        will ultimately trace its ancestry back to that shell.
+        You can observe this with the `pstree` command.
+
+        When the SSH daemon process associated with your connection
+        decides that your connection is dead,
+        it sends a hangup signal (`SIGHUP`) to the login shell.
+        This notifies the shell that you've vanished
+        and that it should begin cleaning up after itself.
+        What happens at this point is shell specific
+        (search its documentation page for "HUP"),
+        but for the most part it will start sending `SIGHUP` to running jobs
+        associated with it before terminating.
+        Each of those processes, in turn, will do
+        whatever they're configured to do on receipt of that signal.
+        Usually that means terminating.
+        If those [processes] have [child processes] of their own,
+        the signal will often get passed along as well.
+
+        The processes that survive a hangup of the controlling terminal are
+            - ones that either disassociated themselves from having a terminal
+              (daemon processes that you started inside of it),
+            - or ones that were invoked with a prefixed `nohup` command.
+              (i.e. "don't hang up on this")
+        Daemons interpret the HUP signal differently; since they
+            - do not have a controlling terminal
+            - and do not automatically receive a HUP signal,
+        it is instead repurposed as a manual request from the administrator
+        (?) to reload the configuration.
+        Ironically this means that most admins don't learn the "hangup" usage
+        of this signal for non-daemons until much, much later. That's why you're reading this!
+
+        Terminal multiplexers are a common way of keeping your shell environment intact
+        between disconnections.
+        They allow you to detach from your shell processes
+        in a way that you can reattach to them later,
+        regardless of whether that disconnection was accidental or deliberate.
+        `tmux` and `screen` are the more popular ones;
+        syntax for using them is beyond the scope of your question,
+        but they're worth looking into.
+
+    A by Michael Hampton:        
+
+        ... any programs still attached to the terminal,
+        and not placed into the background with something like `nohup`,
+        would be killed.
+
+        This is why
+        there are virtual terminal solutions like `tmux` and the older `screen`
+        which create sessions which continue running even if you are disconnected,
+        and to which you can reattach later.
+
+    Answer by slm:
+
+        As [others] have mentioned,
+        once you disconnect from ssh anything running within it is gone.
+
+        As @Michael Hampton and others have mentioned[,]
+        you can use tools like `tmux` or `screen`
+        to disconnect/reconnect to terminals without [losing] their content
+        (i.e. child processes).
+
+        Additionally[,] you can put a process into the background using an ampersand `&`
+        and then use the command `disown` to disassociate them with the current shell.
+        ```
+        # start a command
+        % sleep 5000 &
+        [1] 3820
+
+        # check it
+        % jobs
+        [1]+  Running                 sleep 5000 &
+
+        # disown everything
+        % disown -a
+
+        # check it again (gone from shell)
+        % jobs
+        %
+
+        # but it's still running on the system
+        % ps -eaf|grep "[s]leep"
+        saml      3820 23791  0 00:16 pts/1    00:00:00 sleep 5000
+        %
+
+        ```
+
+source: https://serverfault.com/questions/115968/ssh-session-drops-does-the-command-continue-executing
+
+    Q by Miko:
+
+        If I was running a command [on a remote machine]
+        before the SSH connection was dropped,
+        will the command continue executing?
+    
+    A by Warner:
+
+        In most cases, no.
+        Processes will be sent a SIGHUP [signal] on loss of terminal.
+        You can prefix [your/the] command with `nohup`
+        [which causes the process created by executing the command to ignore the signal.]
+
+    A by Dave Cheney:
+
+        As Warner says above,
+        the child of the SSH daemon (that is the login shell and [its] children)
+        will get `SIGHUP`,
+        but they won't get them instantly.
+        There will be a delay, sometimes in minutes[,]
+        before the SSH daemon on the server side gives up on your connection.
+        During that time the process will continue to run.
+
+        As Warner also said,
+        the process can choose to ignore `SIGHUP`,
+        in which case it will continue to run
+        until it has to request input and then find `STDIN` has closed.
+
+    A by geekifier:
+
+        TODO: post a question about this
+
+              hasn't each of the following been rendered inaccurate
+              by what the previous source called "the systemd v230 debacle"?
+              https://serverfault.com/a/183363
+              https://serverfault.com/a/115980
+
+        I'll add another heplful suggestion to the thread
+
+        If you already started a process that will take a long time ...
+        and forgot to include `nohup` in front of it,
+        you can still prevent it from terminating on (?)logoff.
+
+        Here are the steps:
+
+            1. Press *Ctrl + Z* - this will suspend the job
+            2. Enter `disown -h %x`,
+               where `x` is the job number you get after suspending the job
+            3. Execute `bg` to put the job in the background
+            4. (?)Exit the shell and go on with your life :).
+
+            Comment by njahnke:
+
+                ... (?) log out ...
+    
+    A by zahid:
+
+        [cites the (A by Andrew B), which has already been summarized in this file]
 
 source: https://serverfault.com/questions/117152/do-background-processes-get-a-sighup-when-logging-off
 

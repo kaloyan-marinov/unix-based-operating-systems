@@ -20,15 +20,15 @@ seems to somewhat duplicate (but also build onto) the previous link
 
 		talks about SSH, in a cursory but good-enough-for-now manner
 
-		links to the brief but informative http://lists.gnu.org/archive/html/bug-bash/2009-03/msg00091.html
+		[delete] links to the brief but informative https://lists.gnu.org/archive/html/bug-bash/2009-03/msg00091.html
 
-https://serverfault.com/questions/115968/ssh-session-drops-does-the-command-continue-executing
+[delete] https://serverfault.com/questions/115968/ssh-session-drops-does-the-command-continue-executing
 
-	already has answers here:
+	[delete] already has answers here:
 	https://serverfault.com/questions/463366/does-getting-disconnected-from-an-ssh-session-kill-your-programs
 
 	"actually ispired ... the question" located at the first link within this file
 
-	focuses more heavily on SSH and systemd
+	[delete]  focuses more heavily on SSH and systemd
 
-	culminates with a recommendation that one should use virtual terminal solutions like `tmux` and the older `screen` which create sessions which continue running even if you are disconnected, and to which you can reattach later.
+	[delete]  culminates with a recommendation that one should use virtual terminal solutions like `tmux` and the older `screen` which create sessions which continue running even if you are disconnected, and to which you can reattach later.

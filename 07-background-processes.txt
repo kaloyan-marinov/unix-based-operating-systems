@@ -93,3 +93,37 @@ source: https://linuxize.com/post/how-to-run-linux-commands-in-background/
             Screen or GNU Screen
 
             Tmux is a modern alternative to GNU Screen.
+
+source: https://lists.gnu.org/archive/html/bug-bash/2009-03/msg00091.html
+
+    Q by Matthew Woehlke
+
+        ```
+        $ some-command &
+        $ ^D
+        (bash exits, leaving some-command running)
+        ```
+
+        Is this what is supposed to happen?
+        Just asking because it made me go "huh?";
+        I was expecting some-command to get `SIGHUP`'d.
+    
+    A by Chet Ramey
+
+        Yes, that's what's supposed to happen.
+        How could you run daemons from the command line otherwise?
+
+        You can use the `huponexit` shell option,
+        but that's only in effect for interactive login shells.
+
+        Also, by default, the shell looks for stopped jobs when it exits (or
+        running jobs with the `checkjobs` option enabled) and reports them.
+        This allows you to send them a `SIGHUP` if you want.
+
+        [
+        ```
+        shopt | grep huponexit
+
+        shopt | grep checkjobs
+        ```
+        ]
