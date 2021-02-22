@@ -1,26 +1,14 @@
-without `nohup` - hinting that Unix signals should be my next investigation
+[copy somewhere as a TODO] without `nohup` - hinting that Unix signals should be my next investigation
+[check if this can be removed now]
 (
 prerequisite: `shopt | grep login_shell`
 )
 
-	https://serverfault.com/questions/115999/if-i-launch-a-background-process-and-then-log-out-will-it-continue-to-run
+	[delete] https://serverfault.com/questions/115999/if-i-launch-a-background-process-and-then-log-out-will-it-continue-to-run
 
-	https://serverfault.com/questions/117152/do-background-processes-get-a-sighup-when-logging-off
+	[delete] https://serverfault.com/questions/117152/do-background-processes-get-a-sighup-when-logging-off
 
 		introduces `shopt | grep huponexit`
-
-
-seems to somewhat duplicate (but also build onto) the previous link
-
-	https://unix.stackexchange.com/questions/84737/in-which-cases-is-sighup-not-sent-to-a-job-when-you-log-out
-
-		introduces `shopt | grep checkjobs`
-		[which, on macOS, doesn't work;
-		results in `-bash: shopt: checkjobs: invalid shell option name`]
-
-		talks about SSH, in a cursory but good-enough-for-now manner
-
-		[delete] links to the brief but informative https://lists.gnu.org/archive/html/bug-bash/2009-03/msg00091.html
 
 [delete] https://serverfault.com/questions/115968/ssh-session-drops-does-the-command-continue-executing
 

@@ -217,3 +217,54 @@ source: https://serverfault.com/questions/117152/do-background-processes-get-a-s
     the answer by @Kyle and the comments on it indicate that
     the results depend on the shell instance (BASH vs ZSH)
     which is used to issue the commands in question
+
+[check if the order of the remaining sources in this file makes sense]
+
+source: https://unix.stackexchange.com/questions/84737/in-which-cases-is-sighup-not-sent-to-a-job-when-you-log-out
+
+    [A by Raphael Ahrens]
+
+        BASH seems to send the `SIGHUP`
+        only if it [itself] received a `SIGHUP`, which for example occurs
+            - when a virtual terminal is closed
+            - or when the SSH connection is interrupted.
+        From the documentation:
+
+            The shell exits by default upon receipt of a `SIGHUP`.
+            Before exiting,
+            an interactive shell resends the `SIGHUP` to all jobs, running or stopped.
+            Stopped jobs are sent SIGCONT to ensure that they receive the `SIGHUP`.
+            To prevent the shell from sending the `SIGHUP` signal to a particular job,
+            it should be
+                - removed from the jobs table with the `disown` builtin (see Job Control Builtins)
+                - or marked to not receive `SIGHUP` using `disown -h`.
+
+        So if you type `exit` or press `Ctrl + D`[,]
+        this does not send a hang up signal to the BASH[,]
+        [which implies/ensures that] all background process will remain.
+
+        You can force BASH to warn you about the fact that
+        there are still running background processes with
+        ```
+        shopt -s checkjobs
+        ```
+        
+        [If your BASH instance is an interactive login shell,]
+        there is an option to send the `SIGHUP` on exit [by issuing]
+        ```
+        shopt -s huponexit
+        ```
+    
+    [C by slhck]
+
+        So,
+        when an SSH connection interrupts, `SIGHUP` is sent[;]
+        otherwise, with a clean exit, jobs continue running[.]
+
+source: https://serverfault.com/questions/117152/do-background-processes-get-a-sighup-when-logging-off
+
+    ...
+
+source: https://serverfault.com/questions/115999/if-i-launch-a-background-process-and-then-log-out-will-it-continue-to-run
+
+    ...
