@@ -245,7 +245,7 @@
 
    [the same as the corresponding observation in Scenario 2.4]
 
-# 5. TBD
+# 5. (`CTRL + Z`) + `bg`
 
 ```
 shell 1                                   shell 2
@@ -420,4 +420,31 @@ FAILURE: AS SOON AS THE LAST COMMAND IS ISSUED,
 
          THIS IS A FAILURE BECAUSE, EVEN THOUGH A 14-example/output.txt FILE IS CREATED,
          IT IS AN EMTPY FILE AND THUS LACKS THE EXPECTED CONTENTS.
+```
+
+6. `&`
+
+```
+shell 1                                   shell 2
+-------                                   -------
+$ python 14-example/run_a_long_time.py &
+[1] 14537
+
+                                          $ pstree -asp 14537
+                                          systemd,1 splash
+                                          └─systemd,5954 --user
+                                                └─gnome-terminal-,6610
+                                                   └─bash,14475
+                                                      └─python,14537 14-example/run_a_long_time.py
+
+                                          $ sudo strace -e trace=signal -p 14537
+                                          strace: Process 14537 attached
+
+$ exit
+
+                                          rt_sigaction(SIGINT, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7fd3ccca5040}, {sa_handler=0x5590eebe9490, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7fd3ccca5040}, 8) = 0
+                                          +++ exited with 0 +++
+
+SUCCESS: AFTER 1 MINUTE HAS PASSED,
+         A 14-example/output.txt FILE WITH THE EXPECTED CONTENTS IS CREATED.
 ```
