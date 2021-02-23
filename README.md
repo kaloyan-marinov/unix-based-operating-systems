@@ -502,3 +502,32 @@ FAILURE: AS SOON AS THE LAST COMMAND IS ISSUED,
          THIS IS A FAILURE BECAUSE, EVEN THOUGH A 14-example/output.txt FILE IS CREATED,
          IT IS AN EMTPY FILE AND THUS LACKS THE EXPECTED CONTENTS.
 ```
+
+```
+shell 1                                   shell 2
+-------                                   -------
+$ python 14-example/run_a_long_time.py &
+[1] 16093
+
+                                          $ pstree -asp 16093
+                                          systemd,1 splash
+                                          └─systemd,5954 --user
+                                                └─gnome-terminal-,6610
+                                                   └─bash,16029
+                                                      └─python,16093 14-example/run_a_long_time.py
+
+                                          $ sudo strace -e trace=signal -p 16093
+                                          strace: Process 16093 attached
+
+close the window
+
+                                          --- SIGHUP {si_signo=SIGHUP, si_code=SI_USER, si_pid=16029, si_uid=1000} ---
+                                          +++ killed by SIGHUP +++
+
+FAILURE: AS SOON AS THE LAST COMMAND IS ISSUED,
+         THE PROCESS IS DESTROYED
+         (AND IS NO LONGER VISIBLE VIA `top -p <pid>` OR `htop -p <pid>` in a "shell 3")
+
+         THIS IS A FAILURE BECAUSE, EVEN THOUGH A 14-example/output.txt FILE IS CREATED,
+         IT IS AN EMTPY FILE AND THUS LACKS THE EXPECTED CONTENTS.
+```
