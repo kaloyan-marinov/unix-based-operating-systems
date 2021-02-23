@@ -2,6 +2,7 @@ source: https://linuxize.com/post/how-to-run-linux-commands-in-background/
 
     If your connection drops or you log out of the shell session,
     the background processes are terminated.
+    (?)[Doesn't a "clean exit" such as logout do nothing at all to the background processes?]
     
     There are several ways
     to keep the process running after the interactive shell session ends.
@@ -212,23 +213,40 @@ source: https://serverfault.com/questions/115968/ssh-session-drops-does-the-comm
 
 source: https://serverfault.com/questions/117152/do-background-processes-get-a-sighup-when-logging-off
 
-    `strace` exists on Linux (speciically on Ubuntu 18.04) but not on macOS
+    [Q by Massimo]
 
-    the answer by @Kyle and the comments on it indicate that
-    the results depend on the shell instance (BASH vs ZSH)
-    which is used to issue the commands in question
+        looks like it really doesn't matter
+        if this is done at the physical console or via SSH ...
+        The behavior is exactly the same:
 
-[check if the order of the remaining sources in this file makes sense]
+            - Start a process in the background using `&`
+              (or put it in background after it's started using `CTRL-Z` and `bg`);
+              **this is done without using `nohup`**.
+            - Log off.
+            - Log on again.
+            - The process is still there, running happily,
+              and is now a direct child of `init`.
 
-source: https://unix.stackexchange.com/questions/84737/in-which-cases-is-sighup-not-sent-to-a-job-when-you-log-out
+        [By contrast, the started process] quits immediately
+        if sent a `SIGHUP` ... using `kill -HUP`.
 
-    [A by Raphael Ahrens]
+        So, it really looks like `SIGHUP` is not sent upon logoff
+        ... to background processes
 
-        BASH seems to send the `SIGHUP`
-        only if it [itself] received a `SIGHUP`, which for example occurs
-            - when a virtual terminal is closed
-            - or when the SSH connection is interrupted.
-        From the documentation:
+        The question is, again:
+        shouldn't a `SIGHUP` be sent to processes, even if they're running in background,
+        upon logging off?
+        Why is this not happening?
+
+    [A by Massimo]
+
+        [If your BASH instance is an interactive login shell,
+        whether `SIGHUP` signals get sent
+        to the BASH instance's child processes which are running in the background
+        ultimately] depends on the `huponexit` shell option,
+        which can be viewed and/or set using the built-in `shopt` command.
+
+        [From] the BASH man page:
 
             The shell exits by default upon receipt of a `SIGHUP`.
             Before exiting,
@@ -239,6 +257,159 @@ source: https://unix.stackexchange.com/questions/84737/in-which-cases-is-sighup-
                 - removed from the jobs table with the `disown` builtin (see Job Control Builtins)
                 - or marked to not receive `SIGHUP` using `disown -h`.
 
+            If the `huponexit` shell option has been set with `shopt`,
+            BASH sends a `SIGHUP` to all jobs
+            when an interactive login shell exits. 
+    
+    [C by CarpeNoctem]
+
+        Verified.
+        
+        When I performed an "exit", "logout", or CTL-D[,]
+        the child proc (job) would not receive a `SIGHUP` (both root and reg user).
+        However when I did "kill -HUP $$" to kill the current instance of BASH[,]
+        the child processes DID receive a `SIGHUP`.
+        
+        I then set `huponexit`[,] and the child process did receive `SIGHUP` upon exit.
+
+    [A by Kyle Brandt]
+
+        Shell1:
+            [start a process in the background]
+
+        Shell2:
+            strace -e trace=signal -p <the-process-id-of-the-started-background-process>
+
+        Shell1 Again:
+            [perform one of the following "exit actions":]
+                [- issue] exit
+                [- issue] logout
+                [- type/press] "CTRL + D"
+
+                [- issue] kill -HUP $$
+                [- close the window]
+                   [in the case of an SSH session,
+                   does this simulate/emulate/mirror the session being dropped?]
+        
+        Shell2 Again:
+            [read here whether any signals have just been sent
+            to the started background process]
+
+    [A by Mike S]
+
+        you start a job in a terminal...
+        
+        if you close that terminal without "exiting the shell cleanly",
+        the _terminal_ sends (?)(part-1)BASH the `SIGHUP` signal (?)(part-2)to the shell,
+        which then sends it to all children.
+        
+        If you "exit the shell cleanly"
+        - meaning the job must already be in the background
+         so you can type `exit` or hit `Control-D` at the command prompt -
+        no signals of any sort are sent to the background job from BASH.
+
+        Interestingly, I set `huponexit` to be on with `shopt -s huponexit; shopt`
+        (the latter `shopt` to review), then performed the last test,
+        and again BASH sent no signal to the background process...
+        It seems as though `huponexit` had no bearing one way or the other.
+        (?)
+        [
+            as noted in [A by Massimo] above,
+            the `huponexit` shell option is in effect only for interactive login shells
+
+            in your case, does `shopt | grep huponexit` have a value of `on` or `off`?            
+        ]
+
+    TODO: fill this out
+    
+    `strace` exists on Linux (specifically on Ubuntu 18.04) but not on macOS
+
+    the answer by @Kyle and the comments on it indicate that
+    the results depend on the shell instance (BASH vs ZSH)
+    which is used to issue the commands in question
+
+[check if the order of the remaining sources in this file makes sense]
+
+source: https://serverfault.com/questions/115999/if-i-launch-a-background-process-and-then-log-out-will-it-continue-to-run
+
+    [The question on this website is an older but content-wise identical copy
+    of the question on the previous resource.
+    
+    While some of the answers duplicate what has already been written in this file,
+    I am going to repeat some of those answers
+    whose wording I consider clear and concise.]
+
+    [A by Warner]
+
+        When you fork a process into the background[,]
+        it will still be the child process from the shell executing it.
+
+        All child processes running under a shell are sent a `SIGHUP` upon exit.
+        Performance varies slightly depending upon the exact situation,
+        which is detailed verbosely in BASH's man page.
+        Other shells likely have similar descriptions.
+
+        Apache, and other daemons, typically reload configuration on `SIGHUP`.
+        Userspace utilities often die.
+        Application performance linked to signals can be unique to the application.
+
+        [C by Massimo]
+
+            So the process should just have received a `SIGHUP` in this case, right?
+            Maybe it just ignored it, I'll check.
+
+        [C by Warner]
+
+            Yes, exactly. That's what I believe the situation to be.
+            If you really doubt the documented performance,
+            you could hack out a little script to trap the signal and log it.
+
+            [
+                It is worth noting that the previous resource contains an [A by Mike S].
+                That answer includes a script that traps the signal -
+                for convenience, the script is as follows:
+                ```
+                #!/bin/bash
+
+                imhupped() {
+                        echo "HUP" >> /tmp/outfile
+                }
+
+                trap imhupped SIGHUP
+
+                for i in $(seq 1 6); do echo out $i >> /tmp/outfile; sleep 5; done
+                ```
+            ]
+
+    [A by Warner]
+
+        See:
+
+        https://serverfault.com/questions/115968/ssh-session-drops-does-the-command-continue-executing
+
+        [which has already been summarized in this file]
+
+        [C by Massimo]
+
+            That post actually ispired me to ask the question.
+
+source: https://unix.stackexchange.com/questions/84737/in-which-cases-is-sighup-not-sent-to-a-job-when-you-log-out
+
+    [
+        This question and its accepted answer seem to duplicate the last resource
+        (as well as the second-to-last one).
+    
+        To wit, the [C by Boris Burkov] on this question actually refers to the previous
+        resource, which is welcomed by the OP.
+    ]
+
+    [A by Raphael Ahrens]
+
+        BASH seems to send the `SIGHUP`
+        only if it [itself] received a `SIGHUP`, which for example occurs
+            - when a virtual terminal is closed
+            - or when the SSH connection is interrupted.
+
         So if you type `exit` or press `Ctrl + D`[,]
         this does not send a hang up signal to the BASH[,]
         [which implies/ensures that] all background process will remain.
@@ -248,23 +419,9 @@ source: https://unix.stackexchange.com/questions/84737/in-which-cases-is-sighup-
         ```
         shopt -s checkjobs
         ```
-        
-        [If your BASH instance is an interactive login shell,]
-        there is an option to send the `SIGHUP` on exit [by issuing]
-        ```
-        shopt -s huponexit
-        ```
     
-    [C by slhck]
+        [C by slhck]
 
-        So,
-        when an SSH connection interrupts, `SIGHUP` is sent[;]
-        otherwise, with a clean exit, jobs continue running[.]
-
-source: https://serverfault.com/questions/117152/do-background-processes-get-a-sighup-when-logging-off
-
-    ...
-
-source: https://serverfault.com/questions/115999/if-i-launch-a-background-process-and-then-log-out-will-it-continue-to-run
-
-    ...
+            So,
+            when an SSH connection interrupts, `SIGHUP` is sent[;]
+            otherwise, with a clean exit, jobs continue running[.]
