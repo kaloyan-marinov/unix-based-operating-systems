@@ -559,3 +559,29 @@ $ exit
 SUCCESS: AFTER 1 MINUTE HAS PASSED,
          A 14-example/output.txt FILE WITH THE EXPECTED CONTENTS IS CREATED.
 ```
+
+```
+shell 1                                   shell 2
+-------                                   -------
+$ nohup python 14-example/run_a_long_time.py 2>&1 1>14-example/log.txt &
+[1] 17598
+nohup: ignoring input and redirecting stderr to stdout
+
+                                          $ pstree -asp 17598
+                                          systemd,1 splash
+                                          └─systemd,5954 --user
+                                                └─gnome-terminal-,6610
+                                                   └─bash,17580
+                                                      └─python,17598 14-example/run_a_long_time.py
+
+                                          $ sudo strace -e trace=signal -p 17598
+                                          strace: Process 17598 attached
+
+CTRL + D
+
+                                          rt_sigaction(SIGINT, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7f57da890040}, {sa_handler=0x559b54c38490, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7f57da890040}, 8) = 0
+                                          +++ exited with 0 +++
+
+SUCCESS: AFTER 1 MINUTE HAS PASSED,
+         A 14-example/output.txt FILE WITH THE EXPECTED CONTENTS IS CREATED.
+```
