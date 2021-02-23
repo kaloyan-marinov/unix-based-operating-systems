@@ -473,3 +473,32 @@ CTRL + D
 SUCCESS: AFTER 1 MINUTE HAS PASSED,
          A 14-example/output.txt FILE WITH THE EXPECTED CONTENTS IS CREATED.
 ```
+
+```
+shell 1                                   shell 2
+-------                                   -------
+$ python 14-example/run_a_long_time.py &
+[1] 15342
+
+                                          $ pstree -asp 15342
+                                          systemd,1 splash
+                                          └─systemd,5954 --user
+                                                └─gnome-terminal-,6610
+                                                   └─bash,15329
+                                                      └─python,15342 14-example/run_a_long_time.py
+
+                                          $ sudo strace -e trace=signal -p 15342
+                                          strace: Process 15342 attached
+
+kill -HUP $$
+
+                                          --- SIGHUP {si_signo=SIGHUP, si_code=SI_USER, si_pid=15329, si_uid=1000} ---
+                                          +++ killed by SIGHUP +++
+
+FAILURE: AS SOON AS THE LAST COMMAND IS ISSUED,
+         THE PROCESS IS DESTROYED
+         (AND IS NO LONGER VISIBLE VIA `top -p <pid>` OR `htop -p <pid>` in a "shell 3")
+
+         THIS IS A FAILURE BECAUSE, EVEN THOUGH A 14-example/output.txt FILE IS CREATED,
+         IT IS AN EMTPY FILE AND THUS LACKS THE EXPECTED CONTENTS.
+```
