@@ -1,31 +1,38 @@
 source: https://unix.stackexchange.com/questions/394709/how-to-return-the-currently-active-user-session-on-a-graphical-linux-desktop-ses
 
-    [This excerpt applies to Linux but not to macOS.
-    It shows
-    how to return all the _login(/user)(?) sessions_ that are active on a Linux system,
-    as well as how to get detailed information about each such session.]
+    (A by Stephen Kitt):
 
-    On many current distributions, login sessions (graphical and non-graphical) are managed by `logind`. You can list sessions using
-    ```
-    loginctl list-sessions
-    ```
-    and then display each session’s properties using
-    ```
-    loginctl show-session ${SESSIONID}
-    ```
-    or
-    ```
-    loginctl session-status ${SESSIONID}
-    ```
-    (replacing `${SESSIONID}` as appropriate); the difference between the two variants is that `show-session` is designed to be easily parsed, `session-status` is designed for human consumption.
+        [This excerpt applies to Linux but not to macOS.
+        It shows
+        how to return all the _login(/user)(?) sessions_ that are active on a Linux system,
+        as well as how to get detailed information about each such session.]
 
-    [
-    Issue
-    ```
-    man systemd-logind
-    ```
-    which is called a "Login manager", and read the documentation.
-    ]
+        On many current distributions,
+        login sessions (graphical and non-graphical) are managed by `logind`.
+        You can list sessions using
+        ```
+        loginctl list-sessions
+        ```
+        and then display each session’s properties using
+        ```
+        loginctl show-session ${SESSIONID}
+        ```
+        or
+        ```
+        loginctl session-status ${SESSIONID}
+        ```
+        (replacing `${SESSIONID}` as appropriate);
+        the difference between the two variants is that
+            `show-session` is designed to be easily parsed,
+            `session-status` is designed for human consumption.
+
+        [
+        Issue
+        ```
+        man systemd-logind
+        ```
+        which is called a "Login manager", and read the documentation.
+        ]
 
 source 1: https://www.freedesktop.org/software/systemd/man/org.freedesktop.login1.html
 source 2: https://unix.stackexchange.com/questions/202891/how-to-know-whether-wayland-or-x11-is-being-used
@@ -37,7 +44,7 @@ source 2: https://unix.stackexchange.com/questions/202891/how-to-know-whether-wa
         or "`x11`"/"`mir`"/"`wayland`" (for graphical logins).
     
     [
-    Combining that with "source 2"
+    Combining that with the (A by andreas) within "source 2"
     means that the following command helps us determine which sessions are text-based
     or graphical:
         ```

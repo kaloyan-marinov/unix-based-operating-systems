@@ -40,117 +40,121 @@ source: https://www.linuxquestions.org/questions/programming-9/how-to-check-in-a
 
 source: https://unix.stackexchange.com/questions/38175/difference-between-login-shell-and-non-login-shell
 
-    A login shell is the first process
-    that executes under your user ID when you log in for an interactive session.
-    The login process tells the shell to behave as a login shell...
-    Login shells typically read a file that does things like setting environment variables:
-        /etc/profile and ~/.profile for the traditional Bourne shell,
-        ~/.bash_profile additionally for bash†,
-        /etc/zprofile and ~/.zprofile for zsh†,
-        /etc/csh.login and ~/.login for csh, etc.
+    (A by Gilles 'SO- stop being evil'):
 
-    † I'm simplifying a little, see the manual for the gory details. 
+        A login shell is the first process
+        that executes under your user ID when you log in for an interactive session.
+        The login process tells the shell to behave as a login shell...
+        Login shells typically read a file that does things like setting environment variables:
+            /etc/profile and ~/.profile for the traditional Bourne shell,
+            ~/.bash_profile additionally for bash†,
+            /etc/zprofile and ~/.zprofile for zsh†,
+            /etc/csh.login and ~/.login for csh, etc.
 
-    TODO: read
-        https://linuxhandbook.com/login-shell/
-        which seems to present more (though probably not all) of "the gory details"
+        † I'm simplifying a little, see the manual for the gory details. 
 
-    ---
+        TODO: read
+            https://linuxhandbook.com/login-shell/
+            which seems to present more (though probably not all) of "the gory details"
 
-    [Both in Linux and in macOS,](?) When you log in
-        on a text console(?),
-        or through SSH,
-        or with `su -`,
-    you get an [(interactive)] login shell.
+        ---
 
-    [Both in Linux and in macOS,](?)
-    When you log in in graphical mode (on an X display manager),
-    you don't get a login shell,
-    instead you get a session manager or a window manager.
+        [Both in Linux and in macOS,](?) When you log in
+            on a text console(?),
+            or through SSH,
+            or with `su -`,
+        you get an [(interactive)] login shell.
 
-    ---
+        [Both in Linux and in macOS,](?)
+        When you log in in graphical mode (on an X display manager),
+        you don't get a login shell,
+        instead you get a session manager or a window manager.
 
-    The program that starts the shell decides whether the shell acts as a login shell.
+        ---
 
-        [In Linux,] When you start a shell in a terminal in an existing session
-        (screen, X terminal, Emacs terminal buffer, a shell inside another, etc.),
-        you get an [(interactive)] non-login shell.
-        That shell might read a shell configuration file
+        The program that starts the shell decides whether the shell acts as a login shell.
+
+            [In Linux,] When you start a shell in a terminal in an existing session
+            (screen, X terminal, Emacs terminal buffer, a shell inside another, etc.),
+            you get an [(interactive)] non-login shell.
+            That shell might read a shell configuration file
+                (
+                ~/.bashrc for bash invoked as bash,
+                /etc/zshrc and ~/.zshrc for zsh,
+                /etc/csh.cshrc and ~/.cshrc for csh,
+                ...
+                ).
+
+            When a shell runs a script or a command passed on its command line,
+            it's a [(non-interactive)] non-login shell.
+            Such shells run all the time:
+                it's very common that when a program calls another program,
+                it really runs a tiny script in a shell to invoke that other program.
+            Some shells read a startup file in this case
+                (
+                bash runs the file indicated by the BASH_ENV variable,
+                zsh runs /etc/zshenv and ~/.zshenv
+                ),
+            but this is risky: the shell can be invoked in all sorts of contexts, and there's
+            hardly anything you can do that might not break something.
+
             (
-            ~/.bashrc for bash invoked as bash,
-            /etc/zshrc and ~/.zshrc for zsh,
-            /etc/csh.cshrc and ~/.cshrc for csh,
-            ...
-            ).
-
-        When a shell runs a script or a command passed on its command line,
-        it's a [(non-interactive)] non-login shell.
-        Such shells run all the time:
-            it's very common that when a program calls another program,
-            it really runs a tiny script in a shell to invoke that other program.
-        Some shells read a startup file in this case
-            (
-            bash runs the file indicated by the BASH_ENV variable,
-            zsh runs /etc/zshenv and ~/.zshenv
-            ),
-        but this is risky: the shell can be invoked in all sorts of contexts, and there's
-        hardly anything you can do that might not break something.
-
-        (
-        source: https://unix.stackexchange.com/questions/38175/difference-between-login-shell-and-non-login-shell#comment384433_46856
-        >> On [macOS], by default, [launching] the Terminal application runs a login shell...
-           That's not normal way [i.e. that's not the default behavior] [in Linux].
-        )
+            source: https://unix.stackexchange.com/questions/38175/difference-between-login-shell-and-non-login-shell#comment384433_46856
+            >> On [macOS], by default, [launching] the Terminal application runs a login shell...
+            That's not normal way [i.e. that's not the default behavior] [in Linux].
+            )
 
 https://unix.stackexchange.com/questions/324359/why-a-login-shell-over-a-non-login-shell
     
-    [In Linux]
+    (A by G-Man Says 'Reinstate Monica'):
+    
+        [In Linux]
 
-        The idea is that a user should have (at most) one login shell per host.
-        (Perhaps I should say, one login shell per host per terminal — if you are
-        simultaneously logged in to a host through multiple terminals, you would expect
-        to have multiple login shells.)
+            The idea is that a user should have (at most) one login shell per host.
+            (Perhaps I should say, one login shell per host per terminal — if you are
+            simultaneously logged in to a host through multiple terminals, you would
+            expect to have multiple login shells.)
 
-        This would typically (always?) be the first shell you get upon logging in (hence
-        the name).
+            This would typically (always?) be the first shell you get upon logging in
+            (hence the name).
 
-        So, this scheme allows you to specify actions that you want to happen only once
-        per login and things that you want to happen every time you start a new
-        (interactive) shell.
-
-
-
-        Normally, "every other" shell you run after logging in
-            will be a descendant (a child of a child of a child …) of the login shell,
-            and therefore will inherit many settings ... from the login shell.
-        And, accordingly, the idea is that
-
-            the login initialization files (`.login`, `.profile`, etc.) should set the
-            settings that are inheritable,
-
-            and... `.bashrc` (or whatever else you use) [should] handle the ones that
-            aren’t (set, shopt, non-exported shell variables, etc.)
+            So, this scheme allows you to specify actions that you want to happen only
+            once per login and things that you want to happen every time you start a new
+            (interactive) shell.
 
 
 
-        Another notion is that
-        the login initialization files (and only they) should do “heavy lifting”,
-        i.e., resource-intensive actions.
+            Normally, "every other" shell you run after logging in
+                will be a descendant (a child of a child of a child ...) of the login
+                shell, and therefore will inherit many settings ... from the login shell.
+            And, accordingly, the idea is that
+
+                the login initialization files (`.login`, `.profile`, etc.) should set
+                the settings that are inheritable,
+
+                and... `.bashrc` (or whatever else you use) [should] handle the ones
+                that aren’t (set, shopt, non-exported shell variables, etc.)
 
 
 
-        You should probably avoid having a login shell that is subordinate to
-        another login shell of the same type.
+            Another notion is that
+            the login initialization files (and only they) should do “heavy lifting”,
+            i.e., resource-intensive actions.
 
-    [In macOS]
 
-        As mentioned in https://unix.stackexchange.com/questions/38175/difference-between-login-shell-and-non-login-shell#comment384433_46856,
-        the [macOS] Terminal application runs a login shell,
-        so a typical user will typically have several “login shells” running simultaneously.
 
-        This is a somewhat different model from the one I have described above,
-        and may require the user to rethink what he does in his `.login` or `.profile`
-        (or whatever) file.
+            You should probably avoid having a login shell that is subordinate to
+            another login shell of the same type.
+
+        [In macOS]
+
+            As mentioned in https://unix.stackexchange.com/questions/38175/difference-between-login-shell-and-non-login-shell#comment384433_46856,
+            the [macOS] Terminal application runs a login shell,
+            so a typical user will typically have several “login shells” running simultaneously.
+
+            This is a somewhat different model from the one I have described above,
+            and may require the user to rethink what he does in his `.login` or `.profile`
+            (or whatever) file.
 
 In this file, we have mentioned two term without defining them:
 "session manager" and "window manager".

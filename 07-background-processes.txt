@@ -101,7 +101,7 @@ source: https://linuxize.com/post/how-to-run-linux-commands-in-background/
 
 source: https://lists.gnu.org/archive/html/bug-bash/2009-03/msg00091.html
 
-    Q by Matthew Woehlke
+    (Q by Matthew Woehlke):
 
         ```
         $ some-command &
@@ -113,7 +113,7 @@ source: https://lists.gnu.org/archive/html/bug-bash/2009-03/msg00091.html
         Just asking because it made me go "huh?";
         I was expecting some-command to get `SIGHUP`'d.
     
-    A by Chet Ramey
+    (A by Chet Ramey):
 
         Yes, that's what's supposed to happen.
         How could you run daemons from the command line otherwise?

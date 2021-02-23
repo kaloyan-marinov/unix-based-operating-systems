@@ -2,100 +2,102 @@ RENAME TO 05-4-graphical-mode-login-behind-the-scenes.txt
 
 source: https://unix.stackexchange.com/questions/156549/terminology-reconciliation-display-manager-vs-session-manager-windowing-syste/156556
 
-    A _windowing system_ is a software component that
-    provides windows for applications to draw in
-    and can display these windows on the screen.
-    The "X Window System" is the standard windowing system on Unix systems;
-    outside Mac OS X, it doesn't really have competition
-    (this may change if "Wayland" or "Mir" become viable).
-    The X Window System has a client-server architecture,
-    where the server (known as an X server or X11 server) manages the display hardware
-    and clients are applications.
-    Applications that display windows on an X server
-    are known as X clients or X applications (or X11 clients or X11 applications).
+    (A by Gilles 'SO- stop being evil'):
 
-    As far as applications are concerned, what matters is
-    the communication protocol between applications and the windowing system.
-    This protocol is known as X11 (11th version of the protocol, the current version
-    since 1987), with several common extensions.
+        A _windowing system_ is a software component that
+        provides windows for applications to draw in
+        and can display these windows on the screen.
+        The "X Window System" is the standard windowing system on Unix systems;
+        outside Mac OS X, it doesn't really have competition
+        (this may change if "Wayland" or "Mir" become viable).
+        The X Window System has a client-server architecture,
+        where the server (known as an X server or X11 server) manages the display hardware
+        and clients are applications.
+        Applications that display windows on an X server
+        are known as X clients or X applications (or X11 clients or X11 applications).
 
-    ---
+        As far as applications are concerned, what matters is
+        the communication protocol between applications and the windowing system.
+        This protocol is known as X11 (11th version of the protocol, the current version
+        since 1987), with several common extensions.
 
-    (?) X.Org :
-        is an implementation of the X Window System;
-        
-        has been the de facto standard implementation since the project started in 2004,
-        taking over from XFree86;
-        
-        includes both generic and hardware-specific parts of the X server
-        as well as a number of client libraries and utilities.
+        ---
 
-    ---
+        (?) X.Org :
+            is an implementation of the X Window System;
+            
+            has been the de facto standard implementation since the project started in 2004,
+            taking over from XFree86;
+            
+            includes both generic and hardware-specific parts of the X server
+            as well as a number of client libraries and utilities.
 
-    A _display manager_ is an X11 application whose purpose is
-    to authenticate a user (typically by prompting for a user name and password)
-    and, upon successful authentication, to start a session as that user.
-    The display manager
-    runs as root (at least in part)
-    and terminates or at least leaves the foreground while a user is logged in.
-    The display manager takes care of starting an X server which serves
-    both the login prompt
-    and the subsequent user session.
+        ---
 
-    A _session manager_ is a program whose job is to start other programs.
-    It's the first program started as part of a user's interactive session.
-    It can be started by
-        (a) the display manager (after it has dropped privileges), [or]
-        (b) some program running as the user
-            if the user has logged in by some means other than a display manager,
-            typically with a text mode login prompt;
-            this is usually done via the `startx` script which takes care of:
-                - starting an X server,
-                - running the session manager, and
-                - killing the X server when done.
-    The session manager can be anything
+        A _display manager_ is an X11 application whose purpose is
+        to authenticate a user (typically by prompting for a user name and password)
+        and, upon successful authentication, to start a session as that user.
+        The display manager
+        runs as root (at least in part)
+        and terminates or at least leaves the foreground while a user is logged in.
+        The display manager takes care of starting an X server which serves
+        both the login prompt
+        and the subsequent user session.
 
-        from a simple terminal emulator in which the user can type commands,
+        A _session manager_ is a program whose job is to start other programs.
+        It's the first program started as part of a user's interactive session.
+        It can be started by
+            (a) the display manager (after it has dropped privileges), [or]
+            (b) some program running as the user
+                if the user has logged in by some means other than a display manager,
+                typically with a text mode login prompt;
+                this is usually done via the `startx` script which takes care of:
+                    - starting an X server,
+                    - running the session manager, and
+                    - killing the X server when done.
+        The session manager can be anything
 
-        to a script that starts several predefined programs,
+            from a simple terminal emulator in which the user can type commands,
 
-        to a sophisticated program that remembers applications and window positions
-        from one session to the next.
+            to a script that starts several predefined programs,
 
-    The session ends when the session manager exits.
+            to a sophisticated program that remembers applications and window positions
+            from one session to the next.
 
-    A _window manager_ is an X client with a special role. It:
-        (a) receives notifications when new windows are created and
-        (b) typically traps a number of user events (key and mouse bindings).
-    Its job is
-    to choose where to display windows and at what size,
-    to show and hide windows,
-    to display window decorations (borders, title bar, …), etc.
-    Pretty much every window manager can serve as a session manager
-    [because] the window manager has to run for the whole session anyway.
-    Most window managers
-    offer a way for users to start new programs via menus or key bindings,
-    though strictly speaking this isn't part of the window manager['s] role.
+        The session ends when the session manager exits.
 
-    ---
+        A _window manager_ is an X client with a special role. It:
+            (a) receives notifications when new windows are created and
+            (b) typically traps a number of user events (key and mouse bindings).
+        Its job is
+        to choose where to display windows and at what size,
+        to show and hide windows,
+        to display window decorations (borders, title bar, …), etc.
+        Pretty much every window manager can serve as a session manager
+        [because] the window manager has to run for the whole session anyway.
+        Most window managers
+        offer a way for users to start new programs via menus or key bindings,
+        though strictly speaking this isn't part of the window manager['s] role.
 
-    A _desktop environment_ is a collection of X clients that comprises at least
-        (a) a session manager
-        (b) a window manager
-        (c) a _graphical shell_
-            (
-            in the case of an X Window System,
-            [it] consists of
-            an X window manager,
-            as well as one or multiple programs providing the functionality
-            to start installed applications,
-            to manage open windows and virtual desktops,
-            and often to suppor the widget engine;
+        ---
 
-            In the case of macOS,
-            Quartz could be thought of as the windowing system,
-            and the (?)[graphical] shell consists of
-            the Finder, the Dock, SystemUIServer, and Mission Control.
-            )
-        (d) a collection of utilities
-            such as menus, docks, clipboard manager, macro facility, etc.
+        A _desktop environment_ is a collection of X clients that comprises at least
+            (a) a session manager
+            (b) a window manager
+            (c) a _graphical shell_
+                (
+                in the case of an X Window System,
+                [it] consists of
+                an X window manager,
+                as well as one or multiple programs providing the functionality
+                to start installed applications,
+                to manage open windows and virtual desktops,
+                and often to suppor the widget engine;
+
+                In the case of macOS,
+                Quartz could be thought of as the windowing system,
+                and the (?)[graphical] shell consists of
+                the Finder, the Dock, SystemUIServer, and Mission Control.
+                )
+            (d) a collection of utilities
+                such as menus, docks, clipboard manager, macro facility, etc.

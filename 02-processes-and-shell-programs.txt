@@ -1,12 +1,11 @@
-source: (
-    https://unix.stackexchange.com/questions/152310/how-to-correctly-start-an-application-from-a-shell
-    >> answer by jwm
-    )
+source: https://unix.stackexchange.com/questions/152310/how-to-correctly-start-an-application-from-a-shell
+    
+    (A by jwm):
 
-    In Unix process management, [when a parent process dies],
-    it is normal behavior [for that process] to take all [its] child processes with it.
-    This is done by sending the SIGHUP signal to all child processes;
-    the default handling of SIGHUP terminates the [signal-receiving] process.
+        In Unix process management, [when a parent process dies], it is normal behavior
+        [for that process] to take all [its] child processes with it.
+        This is done by sending the `SIGHUP` signal to all child processes;
+        the default handling of `SIGHUP` terminates the [signal-receiving] process.
 
 https://www.computerhope.com/jargon/i/init.htm
 

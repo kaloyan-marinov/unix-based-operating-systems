@@ -1,45 +1,52 @@
 source: https://askubuntu.com/questions/890995/killing-shell-using-terminal
 
-    [If you "open a terminal", issuing `kill $$` doesn't kill/stop the shell (process).]
+    (Q by luv.preet):
 
-    The main reason is because shells are built to trap the `TERM` signal.
-    This behavior is documented.
+        [
+            If you "open a terminal",
+            issuing `kill $$` doesn't kill/stop the shell (process).
+        ]
 
-        To quote bash 4.3 manual:
-        "
-        SIGNALS
+    (A by Sergiy Kolodyazhnyy):
 
-        When bash is interactive, in the absence of any traps, it ignores SIGTERM (so
-        that `kill 0` does not kill an interactive shell)
-        "
+        The main reason is because shells are built to trap the `TERM` signal.
+        This behavior is documented.
 
-        From `man kill`:
-        "
-        The default signal for `kill` is TERM.
-        "
+            To quote bash 4.3 manual:
+            "
+            SIGNALS
 
-    Now if you were to specify `kill -KILL $$`,
-        [that] would indeed kill your shell,
-        and once the (?)"controlling shell" exits - that would close the terminal.
+            When bash is interactive, in the absence of any traps, it ignores SIGTERM
+            (so that `kill 0` does not kill an interactive shell)
+            "
 
-    [In summary,]
+            From `man kill`:
+            "
+            The default signal for `kill` is TERM.
+            "
+
+        Now if you were to specify `kill -KILL $$`,
+            [that] would indeed kill your shell,
+            and once the (?)"controlling shell" exits - that would close the terminal.
+
+        [In summary,]
+            
+            SIGKILL signal [triggers] instant obliteration [of the process]
+            
+            SIGTERM [makes] (a friendly "hey, please shut down") [request] to the process
+            
+            bash simply catches SIGTERM (whereas SIGKILL is uncatchable). 
         
-        SIGKILL signal [triggers] instant obliteration [of the process]
-        
-        SIGTERM [makes] (a friendly "hey, please shut down") [request] to the process
-        
-        bash simply catches SIGTERM (whereas SIGKILL is uncatchable). 
-    
-    this has nothing to do with window itself, as window PID is always different from
-    shell's:
-    ```
-    # Shell PID
-    $ cat /proc/self/status  | grep '^Pid:'                                                                                  
-    Pid:    7058
-    $ echo $$                                                                                                                
-    14709
+        this has nothing to do with window itself, as window PID is always different
+        from shell's:
+        ```
+        # Shell PID
+        $ cat /proc/self/status  | grep '^Pid:'                                                                                  
+        Pid:    7058
+        $ echo $$                                                                                                                
+        14709
 
-    # GUI window PID
-    $ xdotool getactivewindow getwindowpid 
-    2774
-    ```
+        # GUI window PID
+        $ xdotool getactivewindow getwindowpid 
+        2774
+        ```

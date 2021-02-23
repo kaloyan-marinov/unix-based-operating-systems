@@ -1,37 +1,68 @@
 source: https://www.unixmen.com/non-login-shell-login-shell/#
 
-    For Windows users, the GUI (Graphical User Interface) is _the primary interface for interaction with the operating system_...
+    For Windows users, the GUI (Graphical User Interface) is
+    _the primary interface for interaction with the operating system_...
 
     in Linux,
 
-        there are two major _shell interfaces_ for someone to interact with the operating system:
+        there are two major _shell interfaces_
+        for someone to interact with the operating system:
             1. Login Shell
             2. Non-Login Shell
 
         _GUI is nothing more than just another program_.
 
-            Normally, when a Linux system boots, it prompts you into a _Non-Login Shell_ and waits for your credentials (username/password) to be given.
+            Normally, when a Linux system boots,
+            it prompts you into a _Non-Login Shell_
+            and waits for your credentials (username/password) to be given.
 
-            Then, once you‘ve successfully logged into the system, you are in a _Login Shell_.
+            Then, once you‘ve successfully logged into the system,
+            you are in a _Login Shell_.
 
-            Q: Wait what? You say you use Ubuntu or Fedora or OpenSuSE or OpenWhatever and you don’t see a terminal, right?
-            A: Well, this is due to the fact that most well-known Linux [distributions] _run startup scripts to enable the GUI session from the very beginning_. [In addition], they tend to _automatically [log] you in_ from startup.
+            Q: Wait what? You say you use Ubuntu or Fedora or OpenSuSE or OpenWhatever
+               and you don’t see a terminal, right?
+            A: Well, this is due to the fact that
+               most well-known Linux [distributions] _run startup scripts
+               to enable the GUI session from the very beginning_.
+               [In addition], they tend to _automatically [log] you in_ from startup.
 
-        [If] you are ... running a modern distro that automatically boots you into a GUI..., [launching the Terminal application] once you’ve successfully logged in [creates/gives] what is commonly called [a] Non-Login Shell, because you have already logged in.
+        [If] you are ... running a modern distro
+        that automatically boots you into a GUI...,
+        [launching the Terminal application] once you’ve successfully logged in
+        [creates/gives] what is commonly called [a] Non-Login Shell,
+        because you have already logged in.
 
         If you
             completely logout from your GUI session (eg kill X server)
             or boot into a non-graphical interface (just _switch session_ using CTRL + ALT + F[1=7] keys)
-        you will see ... what we call [a] Login Shell, because you have not logged in yet (but you are going to).
+        you will see ... what we call [a] Login Shell,
+        because you have not logged in yet (but you are going to).
         
-        Different scripts may run on Login and Non-Login Shells. We will talk about them later in another article here at Unixmen.com
+        Different scripts may run on Login and Non-Login Shells.
+        We will talk about them later in another article here at Unixmen.com
         (TODO: look for that article)
 
-        Furthermore, in Linux we have up to 7 different sessions. In order to [switch to any one of them], you can use a common shortcut: CTRL + ALT + F-key (from 1 to 7)... In each session you can be a different user also, which means [that, ] when you [switch to another session, the first thing that will happen is that "the OS"(?) will ask for you to provide authentication credentials for a user of your choice]... In order to come back into the normal GUI session, [hit] CTRL + ALT + [F2] (Ubuntu).
+        Furthermore, in Linux we have up to 7 different sessions.
+        In order to [switch to any one of them], you can use a common shortcut:
+        CTRL + ALT + F-key (from 1 to 7)...
+        In each session you can be a different user also, which means [that,]
+        when you [switch to another session, the first thing that will happen is that
+        "the OS"(?) will ask for you to provide authentication credentials for a user of your choice]...
+        In order to come back into the normal GUI session,
+        [hit] CTRL + ALT + [F2] (Ubuntu).
 
-        So, since the desktop is NOT the only interface to interact with the system, there are several GUIs [available and you] are free to use [whichever one] you want — if you want and when you want. For example, [A Linux machine running a  "webserver process" (= one that serves a web application) does] not utilize [a GUI] at all because there is no reason for such software.
+        So, since the desktop is NOT the only interface to interact with the system,
+        there are several GUIs [available and you] are free to use [whichever one] you want
+        — if you want and when you want.
+        For example, [A Linux machine running a  "webserver process" (= one that serves a web application)
+        does] not utilize [a GUI] at all[,]
+        because there is no reason for such software.
 
-    To sum up, there are two different kinds of shells in Linux: Login Shell and Non-Login Shell. Normally, Linux boots you into a Login Shell by default; [after] you [have] logged in, you are [in] a Non-Login Shell. Pretty simple and easy explanation.
+    To sum up, there are two different kinds of shells in Linux:
+    Login Shell and Non-Login Shell.
+    Normally, Linux boots you into a Login Shell by default;
+    [after] you [have] logged in, you are [in] a Non-Login Shell.
+    Pretty simple and easy explanation.
 
 In this file, we have mentioned one term without defining it: "X server".
 That is part of the "X Window System" which is the standard windowing system on

@@ -1,160 +1,194 @@
 source: https://stackoverflow.com/questions/6548823/use-and-meaning-of-session-and-process-group-in-unix
 
-    A _process group_ is a collection of related processes which can all be signalled at once.
+    (A by Matthew Slattery):
 
-    A _session_ is a collection of process groups, which are either attached to a single terminal device (known as the _controlling terminal_) or not attached to any terminal.
+        A _process group_ is a collection of related processes
+        which can all be signalled at once.
 
-    Sessions are used for job control: one of the process groups in the session is the foreground process group, and can be sent signals by terminal control characters. You can think of a session with a controlling terminal as corresponding to a "login" on that terminal. (Daemons normally disassociate themselves from any controlling terminal by creating a new session without one.)
+        A _session_ is a collection of process groups, which are
+        either attached to a single terminal device (known as the _controlling terminal_)
+        or not attached to any terminal.
 
-    e.g. if you run `some_app` from the shell, the shell creates a new process group for it, and makes that the foreground process group of the session. (`some_app` might create some child processes; by default they will be part of the same process group.) If you then press ^Z, `some_app`'s process group is signalled to stop it; and the shell's process group is switched to be the foreground process group again. Then e.g.`bg %1` would start `some_app`'s process group again, but keep it running in the background.
+        Sessions are used for job control:
+        one of the process groups in the session is the foreground process group,
+        and can be sent signals by terminal control characters.
+        You can think of a session with a controlling terminal
+        as corresponding to a "login" on that terminal.
+        (Daemons normally disassociate themselves from any controlling terminal
+        by creating a new session without one.)
 
-    The [POSIX.1-2008 standard]( http://pubs.opengroup.org/onlinepubs/9699919799/ ) is fairly readable (at least, I think so!) - take a look at the [definitions]( http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap03.html ) and the relevant sections of the ["General Terminal Interface"]( http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap11.html#tag_11 ) chapter.
+        e.g. if you run `some_app` from the shell,
+        the shell creates a new process group for it,
+        and makes that the foreground process group of the session.
+        (`some_app` might create some child processes;
+        by default they will be part of the same process group.)
+        If you then press ^Z, `some_app`'s process group is signalled to stop it;
+        and the shell's process group is switched to be the foreground process group again.
+        Then e.g.`bg %1` would start `some_app`'s process group again,
+        but keep it running in the background.
+
+        The [POSIX.1-2008 standard]( http://pubs.opengroup.org/onlinepubs/9699919799/ )
+        is fairly readable (at least, I think so!)
+        - take a look at the [definitions]( http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap03.html )
+        and the relevant sections of the ["General Terminal Interface"]( http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap11.html#tag_11 ) chapter.
 
 source: https://unix.stackexchange.com/questions/18166/what-are-session-leaders-in-ps
 
-    I thought I knew the answer to this, but I wrote a C program to figure this out.
-
-    ```
-    #include <stdio.h>
-    #include <unistd.h>
-
-    int
-    main(int ac, char **av)
-    {
-            pid_t sid, mypid, pgid, gid;
-
-            mypid = getpid();
-            sid = getsid(0);
-            pgid = getpgid(0);
-            gid = getpgrp();
-
-            printf("PID %d\n", mypid);
-            printf("process group ID of session leader: %d\n", sid);
-            printf("process group ID: %d\n", pgid);
-            printf("process group ID: %d\n", gid);
-
-            if (!fork())
-            {
-                    mypid = getpid();
-                    sid = getsid(0);
-                    pgid = getpgid(0);
-                    gid = getpgrp();
-
-                    printf("child PID %d\n", mypid);
-                    printf("process group ID of session leader: %d\n", sid);
-                    printf("process group ID: %d\n", pgid);
-                    printf("process group ID: %d\n", gid);
-
-                    _exit(0);
-            }
-
-            return 0;
-    }
-    ```
-
-    [Compile] it with `cc -g -o sid sid.c`
-    [and] run it a few different ways, to see what happens:
-    [
-    ```
-    echo $$
-    ```
-    ]
-    ```
-    ./sid
-    nohup ./sid > sid.out
-    setsid ./sid
-    ```
-    [
-    ./sid & echo $!
-    ]
-
-    My advice is to do `man 7 credentials` (or the equivalent if not on Linux),
-    and read the section about [Process group ID and session ID]
-
-    comment by (Peter.O, Aug 6 '11 at 10:02):
-
-        the session id (SID) is the terminal's PID
-            for `./sid`
-            and `nohup ./sid`
-        [the] `nohup` [incarnation] prevented the fork (or seems to)
-            
-        when you run `setsid ./sid`,
-        the session id (SID) is brand new and is the same as the process PID...
+    (A by Bruce Ediger):
     
-    ---
+        I thought I knew the answer to this, but I wrote a C program to figure this out.
 
-    [In Linux, ] Sessions and process groups are just ways to treat a number of related processes as a unit. All the members of a process group always belong to the same session, but a session may have multiple process groups.
+        ```
+        #include <stdio.h>
+        #include <unistd.h>
 
-    every process has several IDs associated with it, including:
+        int
+        main(int ac, char **av)
+        {
+                pid_t sid, mypid, pgid, gid;
 
-    - Process ID (PID)
+                mypid = getpid();
+                sid = getsid(0);
+                pgid = getpgid(0);
+                gid = getpgrp();
 
-        This is an arbitrary number identifying the process. Every process has a unique ID, but after the process exits and the parent process has retrieved the exit status, the process ID is freed to be reused by a new process.
+                printf("PID %d\n", mypid);
+                printf("process group ID of session leader: %d\n", sid);
+                printf("process group ID: %d\n", pgid);
+                printf("process group ID: %d\n", gid);
 
-    - Parent Process ID (PPID)
+                if (!fork())
+                {
+                        mypid = getpid();
+                        sid = getsid(0);
+                        pgid = getpgid(0);
+                        gid = getpgrp();
 
-        This is just the PID of the process that started the process in question.
+                        printf("child PID %d\n", mypid);
+                        printf("process group ID of session leader: %d\n", sid);
+                        printf("process group ID: %d\n", pgid);
+                        printf("process group ID: %d\n", gid);
 
-    - Process Group ID (PGID)
+                        _exit(0);
+                }
 
-        This is just the PID of the process group leader. If PID == PGID, then this process is a process group leader.
+                return 0;
+        }
+        ```
 
-    - Session ID (SID)
+        [Compile] it with `cc -g -o sid sid.c`
+        [and] run it a few different ways, to see what happens:
+        [
+        ```
+        echo $$
+        ```
+        ]
+        ```
+        ./sid
+        nohup ./sid > sid.out
+        setsid ./sid
+        ```
+        [
+        ./sid & echo $!
+        ]
 
-        This is just the PID of the session leader. If PID == SID, then this process is a session leader.
+        My advice is to do `man 7 credentials` (or the equivalent if not on Linux),
+        and read the section about [Process group ID and session ID]
 
-    Normally, a shell will be a session leader, and every pipeline executed by that shell will be a process group. This is to make it easy to kill the children of a shell when it exits.
+        (C by Peter.O):
 
-    ---
-
-    [This answer is specific to Linux; does not apply to macOS, at least not directly.]
-
-    the session id is inherited by child processes
+            the session id (SID) is the terminal's PID
+                for `./sid`
+                and `nohup ./sid`
+            [the] `nohup` [incarnation] prevented the fork (or seems to)
+                
+            when you run `setsid ./sid`,
+            the session id (SID) is brand new and is the same as the process PID...
     
-    Some operations within UNIX/Linux operate on process sessions, for example[:]
-    
-        logging out of the shell
+    (A by cjm):
 
-            The OS will send (?)[= have the shell in question issue] `kill -HUP -$$`,
-            which will send a SIGHUP signal
-            to all the processes with the same session id as the shell.
+        [In Linux, ] Sessions and process groups are just ways
+        to treat a number of related processes as a unit.
+        All the members of a process group always belong to the same session,
+        but a session may have multiple process groups.
 
-            When you `disown` a process [that you started from a shell],
-            the session id of the process is changed from the shell,
-            so (?)[the process] will not respond to the hangup signal.
-            This is one part of the process to become a daemon process.
+        every process has several IDs associated with it, including:
+
+        - Process ID (PID)
+
+            This is an arbitrary number identifying the process.
+            Every process has a unique ID,
+            but after the process exits and the parent process has retrieved the exit status,
+            the process ID is freed to be reused by a new process.
+
+        - Parent Process ID (PPID)
+
+            This is just the PID of the process that started the process in question.
+
+        - Process Group ID (PGID)
+
+            This is just the PID of the process group leader.
+            If PID == PGID, then this process is a process group leader.
+
+        - Session ID (SID)
+
+            This is just the PID of the session leader.
+            If PID == SID, then this process is a session leader.
+
+        Normally, a shell will be a session leader,
+        and every pipeline executed by that shell will be a process group.
+        This is to make it easy to kill the children of a shell when it exits.
+
+    (A by Arcege):
+
+        [This answer is specific to Linux; does not apply to macOS, at least not directly.]
+
+        the session id is inherited by child processes
         
-        the processes called from the [GUI]
-        have the same session id as one of the startup programs
+        Some operations within UNIX/Linux operate on process sessions, for example[:]
+        
+            logging out of the shell
 
-            This allows the OS to perform the same `kill -HUP -$$` operation
-            on all the programs: such as your browser, music player, libreoffice,
-            IM client, etc.
-            (?)[_where_ is the mentioned operation actually performed?
-            
-            in some shell? if yes, shouldn't `-$$` be replaced with the PID of the
-            program in question?
-            
-            a closely related question was raised in the following (hidden) comment:
-            (eZanmoto, Oct 10' 20 at 9:57)]
-            
-            These are the processes that are not session leaders.
+                The OS will send (?)[= have the shell in question issue] `kill -HUP -$$`,
+                which will send a SIGHUP signal
+                to all the processes with the same session id as the shell.
 
-        Two different desired behaviors:
+                When you `disown` a process [that you started from a shell],
+                the session id of the process is changed from the shell,
+                so (?)[the process] will not respond to the hangup signal.
+                This is one part of the process to become a daemon process.
             
-            (a) killing one 'app' (kill firefox and its plugins),     
-            
-                [in the GUI], fire off firefox as a separate session.
-                Then, when the [X] button is pressed,
-                send a signal the firefox's session and its children,
-                but the window manager is not affected
-            
-            versus
+            the processes called from the [GUI]
+            have the same session id as one of the startup programs
 
-            (b) killing all child processes (exiting a GUI).
-            
-                When the GUI dies, then
-                the entire process tree, not the session group, could get the signal.
+                This allows the OS to perform the same `kill -HUP -$$` operation
+                on all the programs: such as your browser, music player, libreoffice,
+                IM client, etc.
+                (?)[_where_ is the mentioned operation actually performed?
+                
+                in some shell? if yes, shouldn't `-$$` be replaced with the PID of the
+                program in question?
+                
+                a closely related question was raised in the following (hidden) comment:
+                (eZanmoto, Oct 10' 20 at 9:57)]
+                
+                These are the processes that are not session leaders.
+
+            Two different desired behaviors:
+                
+                (a) killing one 'app' (kill firefox and its plugins),     
+                
+                    [in the GUI], fire off firefox as a separate session.
+                    Then, when the [X] button is pressed,
+                    send a signal the firefox's session and its children,
+                    but the window manager is not affected
+                
+                versus
+
+                (b) killing all child processes (exiting a GUI).
+                
+                    When the GUI dies, then
+                    the entire process tree, not the session group, could get the signal.
 
 source: http://poincare.matf.bg.ac.rs/~ivana/courses/ps/sistemi_knjige/pomocno/apue/APUE/0201433079/ch09lev1sec6.html
 
@@ -191,20 +225,31 @@ source: http://poincare.matf.bg.ac.rs/~ivana/courses/ps/sistemi_knjige/pomocno/a
             If a modem (or network) disconnect is detected by the terminal interface,
             the hang-up signal is sent to the controlling process (the session leader).
 
-    Usually, we don't have to worry about the controlling terminal; it is established automatically when we log in.
+    Usually, we don't have to worry about the controlling terminal;
+    it is established automatically when we log in.
 
-        POSIX.1 leaves the choice of the mechanism used to allocate a controlling terminal up to each individual implementation.
+        POSIX.1 leaves the choice of the mechanism used to allocate a controlling terminal
+        up to each individual implementation.
 
-            (a) BSD-based systems allocate the controlling terminal for a session when the session leader [does something...]
+            (a) BSD-based systems allocate the controlling terminal for a session
+                when the session leader [does something...]
 
-            (b) Systems derived from UNIX System V allocate the controlling terminal for a session when the session leader [does something...]
+            (b) Systems derived from UNIX System V allocate the controlling terminal for a session
+                when the session leader [does something...]
 
-    There are times when a program wants to talk to the controlling terminal, regardless of whether the standard input or standard output is redirected.
+    There are times when a program wants to talk to the controlling terminal,
+    regardless of whether the standard input or standard output is redirected.
     
-        The way a program guarantees that it is talking to the controlling terminal is to `open` the file `/dev/tty`. This special file is a synonym within the kernel for the controlling terminal.
+        The way a program guarantees that it is talking to the controlling terminal is
+        to `open` the file `/dev/tty`.
+        This special file is a synonym within the kernel for the controlling terminal.
         
-        Naturally, if the program doesn't have a controlling terminal, the `open` of this device will fail.
+        Naturally, if the program doesn't have a controlling terminal,
+        the `open` of this device will fail.
 
 source: https://stackoverflow.com/questions/6548823/use-and-meaning-of-session-and-process-group-in-unix
 
-    The POSIX.1-2008 standard is fairly readable (at least, I think so!) - take a look at the definitions and the relevant sections of the "General Terminal Interface" chapter.
+    [
+        cf. the last paragraph within the summary of this resource,
+        which has already been recorded in the current file
+    ]
