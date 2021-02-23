@@ -585,3 +585,34 @@ CTRL + D
 SUCCESS: AFTER 1 MINUTE HAS PASSED,
          A 14-example/output.txt FILE WITH THE EXPECTED CONTENTS IS CREATED.
 ```
+
+```
+shell 1                                   shell 2
+-------                                   -------
+$ nohup python 14-example/run_a_long_time.py 2>&1 1>14-example/log.txt &
+[1] 18005
+nohup: ignoring input and redirecting stderr to stdout
+
+                                          $ pstree -asp 18005
+                                          systemd,1 splash
+                                          └─systemd,5954 --user
+                                                └─gnome-terminal-,6610
+                                                   └─bash,17631
+                                                      └─python,18005 14-example/run_a_long_time.py
+
+                                          $ sudo strace -e trace=signal -p 18005
+                                          strace: Process 18005 attached
+
+$ echo $$
+17631
+
+$ kill -HUP $$
+
+                                          --- SIGHUP {si_signo=SIGHUP, si_code=SI_USER, si_pid=17631, si_uid=1000} ---
+
+                                          rt_sigaction(SIGINT, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7f04f0f0b040}, {sa_handler=0x556ced640490, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7f04f0f0b040}, 8) = 0
+                                          +++ exited with 0 +++
+
+SUCCESS: AFTER 1 MINUTE HAS PASSED,
+         A 14-example/output.txt FILE WITH THE EXPECTED CONTENTS IS CREATED.
+```
