@@ -448,3 +448,28 @@ $ exit
 SUCCESS: AFTER 1 MINUTE HAS PASSED,
          A 14-example/output.txt FILE WITH THE EXPECTED CONTENTS IS CREATED.
 ```
+
+```
+shell 1                                   shell 2
+-------                                   -------
+$ python 14-example/run_a_long_time.py &
+[1] 14830
+
+                                          $ pstree -asp 14830
+                                          systemd,1 splash
+                                          └─systemd,5954 --user
+                                                └─gnome-terminal-,6610
+                                                   └─bash,14819
+                                                      └─python,14830 14-example/run_a_long_time.py
+
+                                          $ sudo strace -e trace=signal -p 14830
+                                          strace: Process 14830 attached
+
+CTRL + D
+
+                                          rt_sigaction(SIGINT, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7fb505c30040}, {sa_handler=0x55dd83eb9490, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7fb505c30040}, 8) = 0
+                                          +++ exited with 0 +++
+
+SUCCESS: AFTER 1 MINUTE HAS PASSED,
+         A 14-example/output.txt FILE WITH THE EXPECTED CONTENTS IS CREATED.
+```
