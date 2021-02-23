@@ -531,3 +531,31 @@ FAILURE: AS SOON AS THE LAST COMMAND IS ISSUED,
          THIS IS A FAILURE BECAUSE, EVEN THOUGH A 14-example/output.txt FILE IS CREATED,
          IT IS AN EMTPY FILE AND THUS LACKS THE EXPECTED CONTENTS.
 ```
+
+7. `nohup [your-command] 2>&1 1>[log-file] &`
+
+```
+shell 1                                   shell 2
+-------                                   -------
+$ nohup python 14-example/run_a_long_time.py 2>&1 1>14-example/log.txt &
+[1] 16958
+nohup: ignoring input and redirecting stderr to stdout
+
+                                          $ pstree -asp 16958
+                                          systemd,1 splash
+                                          └─systemd,5954 --user
+                                                └─gnome-terminal-,6610
+                                                   └─bash,16884
+                                                      └─python,16958 14-example/run_a_long_time.py
+
+                                          $ sudo strace -e trace=signal -p 16958
+                                          strace: Process 16958 attached
+
+$ exit
+
+                                          rt_sigaction(SIGINT, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7f7689ce7040}, {sa_handler=0x564322994490, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7f7689ce7040}, 8) = 0
+                                          +++ exited with 0 +++
+
+SUCCESS: AFTER 1 MINUTE HAS PASSED,
+         A 14-example/output.txt FILE WITH THE EXPECTED CONTENTS IS CREATED.
+```
