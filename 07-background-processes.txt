@@ -81,6 +81,11 @@ source: https://linuxize.com/post/how-to-run-linux-commands-in-background/
                   (`SIGHUP` is a signal that is sent to a process
                   when its controlling terminal is closed.)
 
+                  TODO: This option,
+                        along with the mentions of the `nohup` command within this
+                        repository's "more advanced"/"later" files,
+                        hint that Unix signals should be my next investigation.
+
             ```
             $ nohup command &
 

@@ -1,5 +1,9 @@
 source: https://linuxize.com/post/how-to-run-linux-commands-in-background/
 
+    TODO: decide whether this entry should be
+          (a) fused together with the same-resource entry in 07-background-processes.txt
+          or (b) removed altogether
+
     If your connection drops or you log out of the shell session,
     the background processes are terminated.
     (?)[Doesn't a "clean exit" such as logout do nothing at all to the background processes?]
@@ -10,7 +14,7 @@ source: https://linuxize.com/post/how-to-run-linux-commands-in-background/
         One way is
         to remove the job from the shell’s job control using the `disown` shell builtin
 
-        Another way to keep a process running after the shell exit is to use `nohup`.
+        Another way to keep a process running after the shell (?)exit is to use `nohup`.
         The `nohup` command executes another program specified as its argument
         and [the so-created process] ignores all `SIGHUP` (hangup) signals.
         `SIGHUP` is a signal that is sent to a process
@@ -23,14 +27,14 @@ source: https://linuxize.com/post/linux-nohup-command/
 
 source: https://serverfault.com/questions/463366/does-getting-disconnected-from-an-ssh-session-kill-your-programs
 
-    Q by fregas:
+    (Q by fregas):
 
         So, say I get disconnected from an SSH-session
         after I've started `rsync` or `cp` or any other command that can be long running.
         After I get disconnected, does that command keep running until it's finished ...
         or does it just get killed?
 
-    A by Andrew B:
+    (A by Andrew B):
 
         Edit for 2016:
 
@@ -104,7 +108,7 @@ source: https://serverfault.com/questions/463366/does-getting-disconnected-from-
         syntax for using them is beyond the scope of your question,
         but they're worth looking into.
 
-    A by Michael Hampton:        
+    (A by Michael Hampton):
 
         ... any programs still attached to the terminal,
         and not placed into the background with something like `nohup`,
@@ -115,7 +119,7 @@ source: https://serverfault.com/questions/463366/does-getting-disconnected-from-
         which create sessions which continue running even if you are disconnected,
         and to which you can reattach later.
 
-    Answer by slm:
+    (A by slm):
 
         As [others] have mentioned,
         once you disconnect from ssh anything running within it is gone.
@@ -152,20 +156,20 @@ source: https://serverfault.com/questions/463366/does-getting-disconnected-from-
 
 source: https://serverfault.com/questions/115968/ssh-session-drops-does-the-command-continue-executing
 
-    Q by Miko:
+    (Q by Miko):
 
         If I was running a command [on a remote machine]
         before the SSH connection was dropped,
         will the command continue executing?
     
-    A by Warner:
+    (A by Warner):
 
         In most cases, no.
         Processes will be sent a SIGHUP [signal] on loss of terminal.
         You can prefix [your/the] command with `nohup`
         [which causes the process created by executing the command to ignore the signal.]
 
-    A by Dave Cheney:
+    (A by Dave Cheney):
 
         As Warner says above,
         the child of the SSH daemon (that is the login shell and [its] children)
@@ -180,7 +184,7 @@ source: https://serverfault.com/questions/115968/ssh-session-drops-does-the-comm
         in which case it will continue to run
         until it has to request input and then find `STDIN` has closed.
 
-    A by geekifier:
+    (A by geekifier):
 
         TODO: post a question about this
 
@@ -207,13 +211,13 @@ source: https://serverfault.com/questions/115968/ssh-session-drops-does-the-comm
 
                 ... (?) log out ...
     
-    A by zahid:
+    (A by zahid):
 
         [cites the (A by Andrew B), which has already been summarized in this file]
 
 source: https://serverfault.com/questions/117152/do-background-processes-get-a-sighup-when-logging-off
 
-    [Q by Massimo]
+    (Q by Massimo):
 
         looks like it really doesn't matter
         if this is done at the physical console or via SSH ...
@@ -238,7 +242,7 @@ source: https://serverfault.com/questions/117152/do-background-processes-get-a-s
         upon logging off?
         Why is this not happening?
 
-    [A by Massimo]
+    (A by Massimo):
 
         [If your BASH instance is an interactive login shell,
         whether `SIGHUP` signals get sent
@@ -261,18 +265,23 @@ source: https://serverfault.com/questions/117152/do-background-processes-get-a-s
             BASH sends a `SIGHUP` to all jobs
             when an interactive login shell exits. 
     
-    [C by CarpeNoctem]
+        (C by CarpeNoctem):
 
-        Verified.
-        
-        When I performed an "exit", "logout", or CTL-D[,]
-        the child proc (job) would not receive a `SIGHUP` (both root and reg user).
-        However when I did "kill -HUP $$" to kill the current instance of BASH[,]
-        the child processes DID receive a `SIGHUP`.
-        
-        I then set `huponexit`[,] and the child process did receive `SIGHUP` upon exit.
+            Verified.
+            
+            When I performed an "exit", "logout", or CTL-D[,]
+            the child proc (job) would not receive a `SIGHUP` (both root and reg user).
+            However when I did "kill -HUP $$" to kill the current instance of BASH[,]
+            the child processes DID receive a `SIGHUP`.
+            
+            I then set `huponexit`[,] and the child process did receive `SIGHUP` upon exit.
 
-    [A by Kyle Brandt]
+    (A by Kyle Brandt):
+
+        [   
+            For starters, note that
+            `strace` exists on Linux (specifically on Ubuntu 18.04) but not on macOS.
+        ]
 
         Shell1:
             [start a process in the background]
@@ -295,7 +304,13 @@ source: https://serverfault.com/questions/117152/do-background-processes-get-a-s
             [read here whether any signals have just been sent
             to the started background process]
 
-    [A by Mike S]
+        [
+            the answer by @Kyle and the comments on it indicate that
+            the results depend on the shell instance (BASH vs ZSH)
+            which is used to start the background process
+        ]
+
+    (A by Mike S):
 
         you start a job in a terminal...
         
@@ -320,26 +335,20 @@ source: https://serverfault.com/questions/117152/do-background-processes-get-a-s
             in your case, does `shopt | grep huponexit` have a value of `on` or `off`?            
         ]
 
-    TODO: fill this out
-    
-    `strace` exists on Linux (specifically on Ubuntu 18.04) but not on macOS
-
-    the answer by @Kyle and the comments on it indicate that
-    the results depend on the shell instance (BASH vs ZSH)
-    which is used to issue the commands in question
-
-[check if the order of the remaining sources in this file makes sense]
-
 source: https://serverfault.com/questions/115999/if-i-launch-a-background-process-and-then-log-out-will-it-continue-to-run
 
-    [The question on this website is an older but content-wise identical copy
-    of the question on the previous resource.
-    
-    While some of the answers duplicate what has already been written in this file,
-    I am going to repeat some of those answers
-    whose wording I consider clear and concise.]
+    (Q by Massimo):
 
-    [A by Warner]
+        [
+            This is an older but content-wise identical copy
+            of the question at (the start of) the previous resource.
+        
+            While some of the answers duplicate what has already been written in this file,
+            I am going to repeat some of those answers
+            whose wording I consider clear and concise.
+        ]
+
+    (A by Warner):
 
         When you fork a process into the background[,]
         it will still be the child process from the shell executing it.
@@ -353,12 +362,12 @@ source: https://serverfault.com/questions/115999/if-i-launch-a-background-proces
         Userspace utilities often die.
         Application performance linked to signals can be unique to the application.
 
-        [C by Massimo]
+        (C by Massimo):
 
             So the process should just have received a `SIGHUP` in this case, right?
             Maybe it just ignored it, I'll check.
 
-        [C by Warner]
+        (C by Warner):
 
             Yes, exactly. That's what I believe the situation to be.
             If you really doubt the documented performance,
@@ -381,7 +390,7 @@ source: https://serverfault.com/questions/115999/if-i-launch-a-background-proces
                 ```
             ]
 
-    [A by Warner]
+    (A by Warner):
 
         See:
 
@@ -389,21 +398,26 @@ source: https://serverfault.com/questions/115999/if-i-launch-a-background-proces
 
         [which has already been summarized in this file]
 
-        [C by Massimo]
+        (C by Massimo):
 
             That post actually ispired me to ask the question.
 
 source: https://unix.stackexchange.com/questions/84737/in-which-cases-is-sighup-not-sent-to-a-job-when-you-log-out
 
-    [
-        This question and its accepted answer seem to duplicate the last resource
-        (as well as the second-to-last one).
-    
-        To wit, the [C by Boris Burkov] on this question actually refers to the previous
-        resource, which is welcomed by the OP.
-    ]
+    (Q by slhck):
+        [
+            This question and its accepted answer seem to duplicate the last resource
+            (as well as the second-to-last one).
+        ]
 
-    [A by Raphael Ahrens]
+        (C by Boris Burkov):
+    
+            [
+                This comment actually refers to the previous resource,
+                which is welcomed by the OP.
+            ]
+
+    (A by Raphael Ahrens):
 
         BASH seems to send the `SIGHUP`
         only if it [itself] received a `SIGHUP`, which for example occurs
@@ -420,7 +434,7 @@ source: https://unix.stackexchange.com/questions/84737/in-which-cases-is-sighup-
         shopt -s checkjobs
         ```
     
-        [C by slhck]
+        (C by slhck):
 
             So,
             when an SSH connection interrupts, `SIGHUP` is sent[;]
