@@ -245,7 +245,7 @@
 
    [the same as the corresponding observation in Scenario 2.4]
 
-# 5. (`CTRL + Z`) + `bg`
+# 5. [locally] (`CTRL + Z`) + `bg`
 
 ```
 shell 1                                   shell 2
@@ -267,7 +267,6 @@ $ jobs -l
                                                       └─python,9786 14-example/run_a_long_time.py
 
                                           $ sudo strace -e trace=signal -p 9786
-                                          [sudo] password for kaloyanmarinov:
                                           strace: Process 9786 attached
                                           --- stopped by SIGTSTP ---
                                           _
@@ -310,7 +309,6 @@ jobs -l
                                                       └─python,10717 14-example/run_a_long_time.py
 
                                           $ sudo strace -e trace=signal -p 10717
-                                          [sudo] password for kaloyanmarinov:
                                           strace: Process 10717 attached
                                           --- stopped by SIGTSTP ---
                                           _
@@ -422,7 +420,7 @@ FAILURE: AS SOON AS THE LAST COMMAND IS ISSUED,
          IT IS AN EMTPY FILE AND THUS LACKS THE EXPECTED CONTENTS.
 ```
 
-6. `&`
+# 6. [locally] `&`
 
 ```
 shell 1                                   shell 2
@@ -532,7 +530,7 @@ FAILURE: AS SOON AS THE LAST COMMAND IS ISSUED,
          IT IS AN EMTPY FILE AND THUS LACKS THE EXPECTED CONTENTS.
 ```
 
-7. `nohup [your-command] 2>&1 1>[log-file] &`
+# 7. [locally] `nohup [your-command] 2>&1 1>[log-file] &`
 
 ```
 shell 1                                   shell 2
