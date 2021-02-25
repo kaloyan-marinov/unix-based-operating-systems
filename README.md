@@ -688,3 +688,44 @@ $ exit
 SUCCESS: AFTER 1 MINUTE HAS PASSED,
          A 14-example/output.txt FILE WITH THE EXPECTED CONTENTS IS CREATED.
 ```
+
+```
+shell 1                                   shell 2
+-------                                   -------
+$ python 14-example/run_a_long_time.py &> 14-example/log.txt < /dev/null
+
+CTRL + Z
+
+[1]+  Stopped                 python 14-example/run_a_long_time.py &> 14-example/log.txt < /dev/null
+
+$ jobs -l
+[1]+  2030 Stopped                 python 14-example/run_a_long_time.py &> 14-example/log.txt < /dev/null
+
+                                          $ pstree -asp 2030
+                                          systemd,1 splash
+                                          └─systemd,5954 --user
+                                                └─gnome-terminal-,6610
+                                                   └─bash,1999
+                                                      └─python,2030 14-example/run_a_long_time.py
+
+                                          $ sudo strace -e trace=signal -p 2030
+                                          strace: Process 2030 attached
+                                          --- stopped by SIGTSTP ---
+                                          _
+
+$ bg
+[1]+ python 14-example/run_a_long_time.py &> 14-example/log.txt < /dev/null &
+
+                                          --- SIGCONT {si_signo=SIGCONT, si_code=SI_USER, si_pid=1999, si_uid=1000} ---
+
+$ jobs -l
+[1]+  2030 Running                 python 14-example/run_a_long_time.py &> 14-example/log.txt < /dev/null &
+
+CTRL + D
+
+                                          rt_sigaction(SIGINT, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7f1c29436040}, {sa_handler=0x55baaffc5490, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7f1c29436040}, 8) = 0
+                                          +++ exited with 0 +++
+
+SUCCESS: AFTER 1 MINUTE HAS PASSED,
+         A 14-example/output.txt FILE WITH THE EXPECTED CONTENTS IS CREATED.
+```
