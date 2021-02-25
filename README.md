@@ -914,3 +914,53 @@ CTRL + D
 SUCCESS: AFTER 1 MINUTE HAS PASSED,
          A 15-example/output.txt FILE WITH THE EXPECTED CONTENTS IS CREATED.
 ```
+
+```
+shell 1                                   shell 2
+-------                                   -------
+$ python3 15-example/run_a_long_time.py &> 15-example/log.txt
+
+CTRL + Z
+
+[1]+  Stopped                 python3 15-example/run_a_long_time.py &> 15-example/log.txt
+
+$ jobs -l
+[1]+  7302 Stopped                 python3 15-example/run_a_long_time.py &> 15-example/log.txt
+
+                                          $ pstree -asp 7302
+                                          systemd,1 splash
+                                          └─systemd,5954 --user
+                                                └─gnome-terminal-,6610
+                                                   └─bash,7292
+                                                      └─python3,7302 15-example/run_a_long_time.py
+
+                                          $ sudo strace -e trace=signal -p 7302
+                                          strace: Process 7302 attached
+                                          --- stopped by SIGTSTP ---
+                                          _
+
+$ bg
+[1]+ python3 15-example/run_a_long_time.py &> 15-example/log.txt &
+
+                                          --- SIGCONT {si_signo=SIGCONT, si_code=SI_USER, si_pid=7292, si_uid=1000} ---
+
+$ jobs -l
+[1]+  7302 Running                 python3 15-example/run_a_long_time.py &> 15-example/log.txt &
+
+$ echo $$
+7292
+
+$ kill -HUP $$
+
+                                          --- SIGHUP {si_signo=SIGHUP, si_code=SI_USER, si_pid=7292, si_uid=1000} ---
+                                          +++ killed by SIGHUP +++
+
+
+FAILURE: AS SOON AS THE LAST COMMAND IS ISSUED,
+         THE PROCESS IS DESTROYED
+         (AND IS NO LONGER VISIBLE VIA `top -p <pid>` OR `htop -p <pid>` in a "shell 3")
+
+         THIS IS A FAILURE BECAUSE, EVEN THOUGH BOTH 15-example/output.txt
+         AND 15-example/log.txt ARE CREATED,
+         EACH IS AN EMTPY FILE AND THUS LACKS ITS EXPECTED CONTENT.
+```
