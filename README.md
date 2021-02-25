@@ -646,188 +646,6 @@ SUCCESS: AFTER 1 MINUTE HAS PASSED,
          A 14-example/output.txt FILE WITH THE EXPECTED CONTENTS IS CREATED.
 ```
 
-# 9.TEMPORARY. [locally] `[your-command] &> 15-example/log.txt < /dev/null` + (`CTRL + Z`) + `bg`
-
-```
-shell 1                                   shell 2
--------                                   -------
-$ python3 15-example/run_a_long_time.py &> 15-example/log.txt < /dev/null
-
-CTRL + Z
-
-[1]+  Stopped                 python3 15-example/run_a_long_time.py &> 15-example/log.txt < /dev/null
-
-$ jobs -l
-[1]+  8808 Stopped                 python3 15-example/run_a_long_time.py &> 15-example/log.txt < /dev/null
-
-                                          $ pstree -asp 8808
-                                          systemd,1 splash
-                                          └─systemd,5954 --user
-                                                └─gnome-terminal-,6610
-                                                   └─bash,8778
-                                                      └─python3,8808 15-example/run_a_long_time.py
-                                          $ sudo strace -e trace=signal -p 8808
-                                          strace: Process 8808 attached
-                                          --- stopped by SIGTSTP ---
-                                          _
-
-$ bg
-[1]+ python3 15-example/run_a_long_time.py &> 15-example/log.txt < /dev/null &
-
-                                          --- SIGCONT {si_signo=SIGCONT, si_code=SI_USER, si_pid=8778, si_uid=1000} ---
-
-$ jobs -l
-[1]+  8808 Running                 python3 15-example/run_a_long_time.py &> 15-example/log.txt < /dev/null &
-
-$ exit
-
-                                          rt_sigaction(SIGINT, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7f8ee6745040}, {sa_handler=0x630100, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7f8ee6745040}, 8) = 0
-                                          sigaltstack(NULL, {ss_sp=0x1582a90, ss_flags=0, ss_size=8192}) = 0
-                                          sigaltstack({ss_sp=NULL, ss_flags=SS_DISABLE, ss_size=0}, NULL) = 0
-                                          +++ exited with 0 +++
-
-SUCCESS: AFTER 1 MINUTE HAS PASSED,
-         A 15-example/output.txt FILE WITH THE EXPECTED CONTENTS IS CREATED.
-```
-
-```
-shell 1                                   shell 2
--------                                   -------
-$ python3 15-example/run_a_long_time.py &> 15-example/log.txt < /dev/null
-
-CTRL + Z
-
-[1]+  Stopped                 python3 15-example/run_a_long_time.py &> 15-example/log.txt < /dev/null
-
-$ jobs -l
-[1]+  9375 Stopped                 python3 15-example/run_a_long_time.py &> 15-example/log.txt < /dev/null
-
-                                          $ pstree -asp 9375
-                                          systemd,1 splash
-                                          └─systemd,5954 --user
-                                                └─gnome-terminal-,6610
-                                                   └─bash,9321
-                                                      └─python3,9375 15-example/run_a_long_time.py
-                                          $ sudo strace -e trace=signal -p 9375
-                                          strace: Process 9375 attached
-                                          --- stopped by SIGTSTP ---
-                                          _
-
-$ bg
-[1]+ python3 15-example/run_a_long_time.py &> 15-example/log.txt < /dev/null &
-
-                                          --- SIGCONT {si_signo=SIGCONT, si_code=SI_USER, si_pid=9321, si_uid=1000} ---
-
-$ jobs -l
-[1]+  9375 Running                 python3 15-example/run_a_long_time.py &> 15-example/log.txt < /dev/null &
-
-CTRL + D
-
-                                          rt_sigaction(SIGINT, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7f1b71b74040}, {sa_handler=0x630100, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7f1b71b74040}, 8) = 0
-                                          sigaltstack(NULL, {ss_sp=0x1ef3a90, ss_flags=0, ss_size=8192}) = 0
-                                          sigaltstack({ss_sp=NULL, ss_flags=SS_DISABLE, ss_size=0}, NULL) = 0
-                                          +++ exited with 0 +++
-
-SUCCESS: AFTER 1 MINUTE HAS PASSED,
-         A 15-example/output.txt FILE WITH THE EXPECTED CONTENTS IS CREATED.
-```
-
-```
-shell 1                                   shell 2
--------                                   -------
-$ python3 15-example/run_a_long_time.py &> 15-example/log.txt < /dev/null
-
-CTRL + Z
-
-[1]+  Stopped                 python3 15-example/run_a_long_time.py &> 15-example/log.txt < /dev/null
-
-$ jobs -l
-[1]+  9919 Stopped                 python3 15-example/run_a_long_time.py &> 15-example/log.txt < /dev/null
-
-                                          $ pstree -asp 9919
-                                          systemd,1 splash
-                                          └─systemd,5954 --user
-                                                └─gnome-terminal-,6610
-                                                   └─bash,9909
-                                                      └─python3,9919 15-example/run_a_long_time.py
-
-                                          $ sudo strace -e trace=signal -p 9919
-                                          strace: Process 9919 attached
-                                          --- stopped by SIGTSTP ---
-                                          _
-
-$ bg
-[1]+ python3 15-example/run_a_long_time.py &> 15-example/log.txt < /dev/null &
-
-                                          --- SIGCONT {si_signo=SIGCONT, si_code=SI_USER, si_pid=9909, si_uid=1000} ---
-
-$ jobs -l
-[1]+  9919 Running                 python3 15-example/run_a_long_time.py &> 15-example/log.txt < /dev/null &
-
-$ echo $$
-9909
-
-$ kill -HUP $$
-
-                                          --- SIGHUP {si_signo=SIGHUP, si_code=SI_USER, si_pid=9909, si_uid=1000} ---
-                                          +++ killed by SIGHUP +++
-
-FAILURE: AS SOON AS THE LAST COMMAND IS ISSUED,
-         THE PROCESS IS DESTROYED
-         (AND IS NO LONGER VISIBLE VIA `top -p <pid>` OR `htop -p <pid>` in a "shell 3")
-
-         THIS IS A FAILURE BECAUSE, EVEN THOUGH A 15-example/output.txt FILE IS CREATED,
-         IT IS AN EMTPY FILE AND THUS LACKS THE EXPECTED CONTENTS.
-```
-
-```
-shell 1                                   shell 2
--------                                   -------
-$ python3 15-example/run_a_long_time.py &> 15-example/log.txt < /dev/null
-
-CTRL + Z
-
-[1]+  Stopped                 python3 15-example/run_a_long_time.py &> 15-example/log.txt < /dev/null
-
-$ jobs -l
-[1]+ 10320 Stopped                 python3 15-example/run_a_long_time.py &> 15-example/log.txt < /dev/null
-
-                                    $ pstree -asp 10320
-                                    systemd,1 splash
-                                    └─systemd,5954 --user
-                                          └─gnome-terminal-,6610
-                                             └─bash,10308
-                                                └─python3,10320 15-example/run_a_long_time.py
-
-                                    $ sudo strace -e trace=signal -p 10320
-                                    strace: Process 10320 attached
-                                    --- stopped by SIGTSTP ---
-                                          _
-
-$ bg
-[1]+ python3 15-example/run_a_long_time.py &> 15-example/log.txt < /dev/null &
-
-                                    --- SIGCONT {si_signo=SIGCONT, si_code=SI_USER, si_pid=10308, si_uid=1000} ---
-
-$ jobs -l
-[1]+ 10320 Running                 python3 15-example/run_a_long_time.py &> 15-example/log.txt < /dev/null &
-
-$ echo $$
-10308
-
-close the window
-
-                                          --- SIGHUP {si_signo=SIGHUP, si_code=SI_USER, si_pid=10308, si_uid=1000} ---
-                                          +++ killed by SIGHUP +++
-
-FAILURE: AS SOON AS THE LAST COMMAND IS ISSUED,
-         THE PROCESS IS DESTROYED
-         (AND IS NO LONGER VISIBLE VIA `top -p <pid>` OR `htop -p <pid>` in a "shell 3")
-
-         THIS IS A FAILURE BECAUSE, EVEN THOUGH A 15-example/output.txt FILE IS CREATED,
-         IT IS AN EMTPY FILE AND THUS LACKS THE EXPECTED CONTENTS.
-```
-
 # 8.TEMPORARY. [locally] `[your-command] &> 15-example/log.txt` + (`CTRL + Z`) + `bg` + `exit`
 
 ```
@@ -1014,4 +832,186 @@ FAILURE: AS SOON AS THE LAST COMMAND IS ISSUED,
          THIS IS A FAILURE BECAUSE, EVEN THOUGH BOTH 15-example/output.txt
          AND 15-example/log.txt ARE CREATED,
          EACH IS AN EMTPY FILE AND THUS LACKS ITS EXPECTED CONTENT.
+```
+
+# 9.TEMPORARY. [locally] `[your-command] &> 15-example/log.txt < /dev/null` + (`CTRL + Z`) + `bg`
+
+```
+shell 1                                   shell 2
+-------                                   -------
+$ python3 15-example/run_a_long_time.py &> 15-example/log.txt < /dev/null
+
+CTRL + Z
+
+[1]+  Stopped                 python3 15-example/run_a_long_time.py &> 15-example/log.txt < /dev/null
+
+$ jobs -l
+[1]+  8808 Stopped                 python3 15-example/run_a_long_time.py &> 15-example/log.txt < /dev/null
+
+                                          $ pstree -asp 8808
+                                          systemd,1 splash
+                                          └─systemd,5954 --user
+                                                └─gnome-terminal-,6610
+                                                   └─bash,8778
+                                                      └─python3,8808 15-example/run_a_long_time.py
+                                          $ sudo strace -e trace=signal -p 8808
+                                          strace: Process 8808 attached
+                                          --- stopped by SIGTSTP ---
+                                          _
+
+$ bg
+[1]+ python3 15-example/run_a_long_time.py &> 15-example/log.txt < /dev/null &
+
+                                          --- SIGCONT {si_signo=SIGCONT, si_code=SI_USER, si_pid=8778, si_uid=1000} ---
+
+$ jobs -l
+[1]+  8808 Running                 python3 15-example/run_a_long_time.py &> 15-example/log.txt < /dev/null &
+
+$ exit
+
+                                          rt_sigaction(SIGINT, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7f8ee6745040}, {sa_handler=0x630100, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7f8ee6745040}, 8) = 0
+                                          sigaltstack(NULL, {ss_sp=0x1582a90, ss_flags=0, ss_size=8192}) = 0
+                                          sigaltstack({ss_sp=NULL, ss_flags=SS_DISABLE, ss_size=0}, NULL) = 0
+                                          +++ exited with 0 +++
+
+SUCCESS: AFTER 1 MINUTE HAS PASSED,
+         A 15-example/output.txt FILE WITH THE EXPECTED CONTENTS IS CREATED.
+```
+
+```
+shell 1                                   shell 2
+-------                                   -------
+$ python3 15-example/run_a_long_time.py &> 15-example/log.txt < /dev/null
+
+CTRL + Z
+
+[1]+  Stopped                 python3 15-example/run_a_long_time.py &> 15-example/log.txt < /dev/null
+
+$ jobs -l
+[1]+  9375 Stopped                 python3 15-example/run_a_long_time.py &> 15-example/log.txt < /dev/null
+
+                                          $ pstree -asp 9375
+                                          systemd,1 splash
+                                          └─systemd,5954 --user
+                                                └─gnome-terminal-,6610
+                                                   └─bash,9321
+                                                      └─python3,9375 15-example/run_a_long_time.py
+                                          $ sudo strace -e trace=signal -p 9375
+                                          strace: Process 9375 attached
+                                          --- stopped by SIGTSTP ---
+                                          _
+
+$ bg
+[1]+ python3 15-example/run_a_long_time.py &> 15-example/log.txt < /dev/null &
+
+                                          --- SIGCONT {si_signo=SIGCONT, si_code=SI_USER, si_pid=9321, si_uid=1000} ---
+
+$ jobs -l
+[1]+  9375 Running                 python3 15-example/run_a_long_time.py &> 15-example/log.txt < /dev/null &
+
+CTRL + D
+
+                                          rt_sigaction(SIGINT, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7f1b71b74040}, {sa_handler=0x630100, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7f1b71b74040}, 8) = 0
+                                          sigaltstack(NULL, {ss_sp=0x1ef3a90, ss_flags=0, ss_size=8192}) = 0
+                                          sigaltstack({ss_sp=NULL, ss_flags=SS_DISABLE, ss_size=0}, NULL) = 0
+                                          +++ exited with 0 +++
+
+SUCCESS: AFTER 1 MINUTE HAS PASSED,
+         A 15-example/output.txt FILE WITH THE EXPECTED CONTENTS IS CREATED.
+```
+
+```
+shell 1                                   shell 2
+-------                                   -------
+$ python3 15-example/run_a_long_time.py &> 15-example/log.txt < /dev/null
+
+CTRL + Z
+
+[1]+  Stopped                 python3 15-example/run_a_long_time.py &> 15-example/log.txt < /dev/null
+
+$ jobs -l
+[1]+  9919 Stopped                 python3 15-example/run_a_long_time.py &> 15-example/log.txt < /dev/null
+
+                                          $ pstree -asp 9919
+                                          systemd,1 splash
+                                          └─systemd,5954 --user
+                                                └─gnome-terminal-,6610
+                                                   └─bash,9909
+                                                      └─python3,9919 15-example/run_a_long_time.py
+
+                                          $ sudo strace -e trace=signal -p 9919
+                                          strace: Process 9919 attached
+                                          --- stopped by SIGTSTP ---
+                                          _
+
+$ bg
+[1]+ python3 15-example/run_a_long_time.py &> 15-example/log.txt < /dev/null &
+
+                                          --- SIGCONT {si_signo=SIGCONT, si_code=SI_USER, si_pid=9909, si_uid=1000} ---
+
+$ jobs -l
+[1]+  9919 Running                 python3 15-example/run_a_long_time.py &> 15-example/log.txt < /dev/null &
+
+$ echo $$
+9909
+
+$ kill -HUP $$
+
+                                          --- SIGHUP {si_signo=SIGHUP, si_code=SI_USER, si_pid=9909, si_uid=1000} ---
+                                          +++ killed by SIGHUP +++
+
+FAILURE: AS SOON AS THE LAST COMMAND IS ISSUED,
+         THE PROCESS IS DESTROYED
+         (AND IS NO LONGER VISIBLE VIA `top -p <pid>` OR `htop -p <pid>` in a "shell 3")
+
+         THIS IS A FAILURE BECAUSE, EVEN THOUGH A 15-example/output.txt FILE IS CREATED,
+         IT IS AN EMTPY FILE AND THUS LACKS THE EXPECTED CONTENTS.
+```
+
+```
+shell 1                                   shell 2
+-------                                   -------
+$ python3 15-example/run_a_long_time.py &> 15-example/log.txt < /dev/null
+
+CTRL + Z
+
+[1]+  Stopped                 python3 15-example/run_a_long_time.py &> 15-example/log.txt < /dev/null
+
+$ jobs -l
+[1]+ 10320 Stopped                 python3 15-example/run_a_long_time.py &> 15-example/log.txt < /dev/null
+
+                                    $ pstree -asp 10320
+                                    systemd,1 splash
+                                    └─systemd,5954 --user
+                                          └─gnome-terminal-,6610
+                                             └─bash,10308
+                                                └─python3,10320 15-example/run_a_long_time.py
+
+                                    $ sudo strace -e trace=signal -p 10320
+                                    strace: Process 10320 attached
+                                    --- stopped by SIGTSTP ---
+                                          _
+
+$ bg
+[1]+ python3 15-example/run_a_long_time.py &> 15-example/log.txt < /dev/null &
+
+                                    --- SIGCONT {si_signo=SIGCONT, si_code=SI_USER, si_pid=10308, si_uid=1000} ---
+
+$ jobs -l
+[1]+ 10320 Running                 python3 15-example/run_a_long_time.py &> 15-example/log.txt < /dev/null &
+
+$ echo $$
+10308
+
+close the window
+
+                                          --- SIGHUP {si_signo=SIGHUP, si_code=SI_USER, si_pid=10308, si_uid=1000} ---
+                                          +++ killed by SIGHUP +++
+
+FAILURE: AS SOON AS THE LAST COMMAND IS ISSUED,
+         THE PROCESS IS DESTROYED
+         (AND IS NO LONGER VISIBLE VIA `top -p <pid>` OR `htop -p <pid>` in a "shell 3")
+
+         THIS IS A FAILURE BECAUSE, EVEN THOUGH A 15-example/output.txt FILE IS CREATED,
+         IT IS AN EMTPY FILE AND THUS LACKS THE EXPECTED CONTENTS.
 ```
