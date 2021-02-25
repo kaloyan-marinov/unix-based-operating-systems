@@ -646,7 +646,7 @@ SUCCESS: AFTER 1 MINUTE HAS PASSED,
          A 14-example/output.txt FILE WITH THE EXPECTED CONTENTS IS CREATED.
 ```
 
-# 8.TEMPORARY. [locally] `[your-command] &> 08-example/log.txt < /dev/null` + (`CTRL + Z`) + `bg`
+# 8.TEMPORARY. [locally] `[your-command] &> 14-example/log.txt < /dev/null` + (`CTRL + Z`) + `bg`
 
 ```
 shell 1                                   shell 2
@@ -768,6 +768,54 @@ $ echo $$
 $ kill -HUP $$
 
                                           --- SIGHUP {si_signo=SIGHUP, si_code=SI_USER, si_pid=2469, si_uid=1000} ---
+                                          +++ killed by SIGHUP +++
+
+FAILURE: AS SOON AS THE LAST COMMAND IS ISSUED,
+         THE PROCESS IS DESTROYED
+         (AND IS NO LONGER VISIBLE VIA `top -p <pid>` OR `htop -p <pid>` in a "shell 3")
+
+         THIS IS A FAILURE BECAUSE, EVEN THOUGH A 14-example/output.txt FILE IS CREATED,
+         IT IS AN EMTPY FILE AND THUS LACKS THE EXPECTED CONTENTS.
+```
+
+```
+shell 1                                   shell 2
+-------                                   -------
+$ python 14-example/run_a_long_time.py &> 14-example/log.txt < /dev/null
+
+CTRL + Z
+
+[1]+  Stopped                 python 14-example/run_a_long_time.py &> 14-example/log.txt < /dev/null
+
+$ jobs -l
+[1]+  3287 Stopped                 python 14-example/run_a_long_time.py &> 14-example/log.txt < /dev/null
+
+                                          $ pstree -asp 3287
+                                          systemd,1 splash
+                                          └─systemd,5954 --user
+                                                └─gnome-terminal-,6610
+                                                   └─bash,3278
+                                                      └─python,3287 14-example/run_a_long_time.py
+
+                                          $ sudo strace -e trace=signal -p 3287
+                                          strace: Process 3287 attached
+                                          --- stopped by SIGTSTP ---
+                                          _
+
+$ bg
+[1]+ python 14-example/run_a_long_time.py &> 14-example/log.txt < /dev/null &
+
+                                          --- SIGCONT {si_signo=SIGCONT, si_code=SI_USER, si_pid=3278, si_uid=1000} ---
+
+$ jobs -l
+[1]+  3287 Running                 python 14-example/run_a_long_time.py &> 14-example/log.txt < /dev/null &
+
+$ echo $$
+3278
+
+close the window
+
+                                          --- SIGHUP {si_signo=SIGHUP, si_code=SI_USER, si_pid=3278, si_uid=1000} ---
                                           +++ killed by SIGHUP +++
 
 FAILURE: AS SOON AS THE LAST COMMAND IS ISSUED,
