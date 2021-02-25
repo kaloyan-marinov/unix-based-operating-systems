@@ -870,3 +870,47 @@ $ exit
 SUCCESS: AFTER 1 MINUTE HAS PASSED,
          A 15-example/output.txt FILE WITH THE EXPECTED CONTENTS IS CREATED.
 ```
+
+```
+shell 1                                   shell 2
+-------                                   -------
+$ python3 15-example/run_a_long_time.py &> 15-example/log.txt
+
+CTRL + Z
+
+[1]+  Stopped                 python3 15-example/run_a_long_time.py &> 15-example/log.txt
+
+$ jobs -l
+[1]+  6355 Stopped                 python3 15-example/run_a_long_time.py &> 15-example/log.txt
+
+                                          $ pstree -asp 6355
+                                          systemd,1 splash
+                                          └─systemd,5954 --user
+                                                └─gnome-terminal-,6610
+                                                   └─bash,6318
+                                                      └─python3,6355 15-example/run_a_long_time.py
+
+                                          $ sudo strace -e trace=signal -p 6355
+                                          strace: Process 6355 attached
+                                          --- stopped by SIGTSTP ---
+                                          _
+$ bg
+[1]+ python3 15-example/run_a_long_time.py &> 15-example/log.txt &
+
+                                          --- SIGCONT {si_signo=SIGCONT, si_code=SI_USER, si_pid=6318, si_uid=1000} ---
+
+$ jobs -l
+[1]+  6355 Running                 python3 15-example/run_a_long_time.py &> 15-example/log.txt &
+
+
+CTRL + D
+
+                                          rt_sigaction(SIGINT, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7fb7f8fde040}, {sa_handler=0x630100, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7fb7f8fde040}, 8) = 0
+                                          sigaltstack(NULL, {ss_sp=0x1e1da90, ss_flags=0, ss_size=8192}) = 0
+                                          sigaltstack({ss_sp=NULL, ss_flags=SS_DISABLE, ss_size=0}, NULL) = 0
+                                          +++ exited with 0 +++
+
+
+SUCCESS: AFTER 1 MINUTE HAS PASSED,
+         A 15-example/output.txt FILE WITH THE EXPECTED CONTENTS IS CREATED.
+```
