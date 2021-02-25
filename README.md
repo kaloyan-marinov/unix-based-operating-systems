@@ -245,7 +245,7 @@
 
    [the same as the corresponding observation in Scenario 2.4]
 
-# 5. [locally] (`CTRL + Z`) + `bg`
+# 5. [locally] `[your-command]` + (`CTRL + Z`) + `bg`
 
 ```
 shell 1                                   shell 2
@@ -420,7 +420,7 @@ FAILURE: AS SOON AS THE LAST COMMAND IS ISSUED,
          IT IS AN EMTPY FILE AND THUS LACKS THE EXPECTED CONTENTS.
 ```
 
-# 6. [locally] `&`
+# 6. [locally] `[your-command] &`
 
 ```
 shell 1                                   shell 2
@@ -646,7 +646,7 @@ SUCCESS: AFTER 1 MINUTE HAS PASSED,
          A 14-example/output.txt FILE WITH THE EXPECTED CONTENTS IS CREATED.
 ```
 
-# 8.TEMPORARY. [locally] `[your-command] &> 15-example/log.txt` + (`CTRL + Z`) + `bg` + `exit`
+# 8. [locally] `[your-command] &> 15-example/log.txt` + (`CTRL + Z`) + `bg`
 
 ```
 shell 1                                   shell 2
@@ -834,7 +834,7 @@ FAILURE: AS SOON AS THE LAST COMMAND IS ISSUED,
          EACH IS AN EMTPY FILE AND THUS LACKS ITS EXPECTED CONTENT.
 ```
 
-# 9.TEMPORARY. [locally] `[your-command] &> 15-example/log.txt < /dev/null` + (`CTRL + Z`) + `bg`
+# 9. [locally] `[your-command] &> 15-example/log.txt < /dev/null` + (`CTRL + Z`) + `bg`
 
 ```
 shell 1                                   shell 2
