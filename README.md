@@ -825,3 +825,48 @@ FAILURE: AS SOON AS THE LAST COMMAND IS ISSUED,
          THIS IS A FAILURE BECAUSE, EVEN THOUGH A 14-example/output.txt FILE IS CREATED,
          IT IS AN EMTPY FILE AND THUS LACKS THE EXPECTED CONTENTS.
 ```
+
+# 9.TEMPORARY. [locally] `[your-command] &> 15-example/log.txt` + (`CTRL + Z`) + `bg` + `exit`
+
+```
+shell 1                                   shell 2
+-------                                   -------
+$ python3 15-example/run_a_long_time.py &> 15-example/log.txt
+
+CTRL + Z
+
+[1]+  Stopped                 python3 15-example/run_a_long_time.py &> 15-example/log.txt
+
+$ jobs -l
+[1]+  5049 Stopped                 python3 15-example/run_a_long_time.py &> 15-example/log.txt
+
+                                          $ pstree -asp 5049
+                                          systemd,1 splash
+                                          └─systemd,5954 --user
+                                                └─gnome-terminal-,6610
+                                                   └─bash,4442
+                                                      └─python3,5049 15-example/run_a_long_time.py
+                                          $ sudo strace -e trace=signal -p 5049
+                                          strace: Process 5049 attached
+                                          --- stopped by SIGTSTP ---
+                                          _
+
+$ bg
+[1]+ python3 15-example/run_a_long_time.py &> 15-example/log.txt &
+
+                                          --- SIGCONT {si_signo=SIGCONT, si_code=SI_USER, si_pid=4442, si_uid=1000} ---
+
+$ jobs -l
+[1]+  5049 Running                 python3 15-example/run_a_long_time.py &> 15-example/log.txt &
+
+$ exit
+
+                                          rt_sigaction(SIGINT, {sa_handler=SIG_DFL, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7fe8c1818040}, {sa_handler=0x630100, sa_mask=[], sa_flags=SA_RESTORER, sa_restorer=0x7fe8c1818040}, 8) = 0
+                                          sigaltstack(NULL, {ss_sp=0x2752a90, ss_flags=0, ss_size=8192}) = 0
+                                          sigaltstack({ss_sp=NULL, ss_flags=SS_DISABLE, ss_size=0}, NULL) = 0
+                                          +++ exited with 0 +++
+
+
+SUCCESS: AFTER 1 MINUTE HAS PASSED,
+         A 15-example/output.txt FILE WITH THE EXPECTED CONTENTS IS CREATED.
+```
