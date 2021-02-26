@@ -28,3 +28,23 @@ https://unix.stackexchange.com/questions/352442/process-without-a-controlling-te
 https://superuser.com/questions/1375395/how-do-i-detach-from-a-controlling-terminal-from-the-command-line
 
 Q: does there exist a notion of a "controlling shell" and, if yes, how does it relate to the certainly-existing notion of a "controlling terminal"?
+
+https://dev.to/jfhbrook/what-s-a-desktop-session-manager-and-why-do-i-want-one-agl
+
+    Josh Holbrook
+
+    pet budgie Korben
+
+    xmonad, a tiling window manager written in Haskell
+
+    I set up a [tiling window manager in OSX]( https://ianyh.com/amethyst/ )
+
+https://superuser.com/questions/662431/what-exactly-determines-if-a-backgrounded-job-is-killed-when-the-shell-is-exited
+
+    https://stackoverflow.com/questions/4298741/how-bash-handles-the-jobs-when-logout
+
+        https://stackoverflow.com/questions/21294283/when-did-hup-stop-getting-sent-and-what-can-i-do-about-it/21294799#21294799
+
+https://scriptingosx.com/2019/06/moving-to-zsh/
+
+https://stackoverflow.blog/2020/02/12/when-laziness-is-efficient-make-the-most-of-your-command-line/
