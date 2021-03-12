@@ -1,0 +1,191 @@
+TODO:
+
+    actually take the advice in (12-tbd,txt >> "My advice is to do `man 7 credentials` (or the equivalent if not on Linux)"),
+    and read that manpage carefully
+
+    read this file's contents
+
+    having refreshed your memory on the topic of sessions, process groups, and the like,
+    re-read 1 through 5 of this repo
+    and decide whether any changes are needed (to any file's content and/or name)
+
+    decide whether any changes to (the content and/or name of) 12-tbd.txt are needed
+
+source: https://dvdhrm.wordpress.com/2013/08/24/session-management-on-linux/
+date: 2013-08-24
+
+[0) Introduction]
+
+    One thing I always admired on linux is fast session-switching. A simple key-press (ctrl+alt+Fx) and I can ditch my current session to switch to another one... But how exactly does session management work today? And how did _systemd-logind_ change this situation?
+
+    First, we need to define a session. A session is a group of processes running under control of a single user
+
+        a user can only interact with the active (or foreground) session
+
+        all started processes will always belong to the session they were started in
+        [[you] cannot escape from the session]
+
+        Only system-daemons (which are not attached to a session) can spawn new sessions.
+
+    A session usually has different user-daemons which provide services for the session.
+
+1) Session Management
+
+    Historically, every process on a system has a session-id which defines the session a process belongs to... However, with `systemd-logind` a new more-versatile concept was introduced. To understand this, we need to first look at _seats_.
+
+    Seats
+
+        A _seat_ is a virtual object that describe a physical interface to a system.
+
+            The combination of a monitor plus keyboard and mouse form a usual seat. One user can interact with the system through this seat.
+
+        On normal systems only a single seat exists (called `seat0`). But more seats can be created on request. 
+
+            If you attach another monitor plus keyboard and mouse, another user can interact with the system in parallel via this new seat (eg., called seat1).
+
+            It is important to note that these seats are independent of each other.
+       
+        Any device connected to your system can be attached to a seat, but only to one seat at a time! If a device is attached to seat, it cannot be used by processes running on another seat. Obviously, input devices, sound-devices and monitors are usually attached to a seat. Network-interfaces, for example, _can_ be left unattached so all seats can share an internet-connection. It is up to the system-administrator to decide which devices to attach to which seat, or whether to leave them as global devices that can be shared.
+
+    Bootup
+
+        During system-boot, `systemd` starts several daemons to manage a system. 
+
+            All these daemons are global and not attached to a seat or session.
+
+                This also means, these daemons must not access devices attached to a seat.
+                [There exists at least one exception to this rule.
+                That exception is described further down in this file.
+                Its description is marked with "[*]".]
+
+            Among these daemons is also `systemd-logind`, which is responsible for _session and seat management_.
+
+        To allow user interaction, `systemd` needs to automatically spawn a new session for each seat.
+
+            This
+                
+                is usually a login-session (like `gdm`, `kdm` or `LightDM`)
+
+                but might also be configured as auto-login and spawn directly a user-session like `gnome-session`.
+
+            In case of a login-session, the greeter
+
+                draws login and password fields
+
+                and[,] after verifying the input, it instructs `systemd` to spawn a user-session. Note that the greeter cannot start the user-session itself as it already runs in a session (you cannot escape your session, remember?).
+
+        But what exactly does `systemd` do to control sessions?
+
+    Sessions
+
+        Whenever `systemd` is instructed to start a new session,
+
+            it first verifies the caller is allowed to do that
+
+            and then it spawns the _first process_ for the session.
+
+        Internally, it
+
+            attaches a new session-id to this process,
+
+            saves the seat this session is run on
+
+            and [saves] some other maintenance data.
+
+        The first process for a session is responsible of initializing the session.
+
+            In case of `gnome-session`, it
+                spawns the X-Server,
+                [spawns] some gnome-specific maintenance daemons
+                and then monitors the session in case something goes wrong.
+            You can now interact with this session (normally through the X-Server) and do your daily work.
+
+2) Case-Study: Text-mode sessions
+
+    As a concrete non-trivial scenario, I’ll explain how text-mode sessions [are started.]
+
+    First,
+
+        we need to know that virtual-terminals are basically a combination of input devices and a monitor.
+
+        They can be accessed via `/dev/tty<num>` (where `<num>` is between 1 and 63; the other `/dev/ttyXY` devices are no VTs!).
+
+        (If you read from them, you get input from connected keyboards, if you write to them, the kernel displays it as text on the monitor. Some rather complex control-sequences are available to do colors or more, but that’s beyond the scope.)
+
+        VTs are always bound to `seat0`.
+        So only sessions on this seat can use VTs (which means, classic text-mode is only available on `seat0`).
+
+    Text-mode sessions are special in that they are not spawned by a login-session.
+
+        `systemd-logind` spawns `/bin/agetty` right during boot for each VT (you can configure how many of the 63 possible should be started).
+
+        [*]
+        `agetty` is running as system daemon and not in a session!
+
+        However, it is bound to `seat0`, obviously.
+
+        [Here is what happens when a text-mode session is started:]
+
+            `agetty` initializes the VT
+
+            and runs `/bin/login`.
+
+            `login` then writes a greeter to the VT and reads username plus password from it.
+
+            (As you might notice, this is problematic as it [= the system daemon running `agetty`] accesses devices attached to a seat even though it’s not running in a session. But due to the design of VTs, this cannot be easily avoided.)
+
+            Once `login` verified the user-input, it instructs `systemd` to start the given user-session in text-mode. It looks up the initial process in `/etc/passwd` (let’s assume it is `/bin/bash`) and runs it.
+
+                So [that started] bash [instance becomes] the controlling process in this session.
+
+                It also substitutes the X-Server in that it provides user-interaction (in text mode rather than graphics).
+
+                    It allows to switch between different processes (`ctrl+Z`, `fg`, `bg` and `jobs`) and allows starting other session-daemons during initialization (via `.bashrc`).
+
+        So while text-mode feels a lot different, it is in fact very similar to graphics mode and is internally handled almost equally.
+
+3) Multi-Session
+
+    We now understand
+        what a session is,
+        how they are created
+        and how a user interacts with them.
+    However, we haven’t discussed what happens if there are multiple sessions on a seat.
+
+    On current systems, multiple sessions are only allowed on `seat0` if VTs are enabled (which is usually the case). That means, on all other seats, once you spawned a session,
+
+        you have to stick with it.
+
+        You cannot ctrl+alt+Fx away from the session (the reason for this is historical and we’re about to change this).
+
+        However, you can close the session and then start a new one.
+
+    But if we assume our seat supports multiple sessions, how does that work?
+
+        [in order for `systemd-logind` to be able to carry out its responsibility for session management,] it keeps an `Active` attribute for each session. It’s a boolean value that [indicates] whether the session is currently active or not.
+
+            `systemd-logind` takes care that always _at most one_ session is active. If no session runs on a seat, no session might be active (also in other situations which we ignore here as it’s an implementation detail).
+
+            Additionally, `systemd-logind` sets the correct access-restrictions on devices attached to a seat so only the active session can access these devices. This guarantees that no background session interferes with foreground activity.
+
+        To switch between sessions,
+
+            each session has to listen for special keyboard input (normally `ctrl+alt+Fx`) and instruct `systemd-logind` to switch to another session once it’s pressed. Today, this is implemented in the X-Server or, if no x-server runs in the session, by the underlying VT.
+
+            You can also send a dbus call to `systemd-logind` directly to perform the session-switch (see `loginctl activate <sid>`).
+
+        So for proper multi-session support,
+
+            a login-session spawns a user-session during login
+            but stays active in background.
+
+            A user can now switch between the user-session and the login-session[,]
+            and optionally spawn additional session by logging in again.
+
+            Session processes can listen for dbus signals from `systemd-logind` to be notified when they are activated or deactivated. This allows them to go asleep while being in background and start up again once being put in foreground.
+
+further resources on this topic:
+
+    1. (2013-08-24, https://dvdhrm.wordpress.com/2013/08/24/how-vt-switching-works/ ) is linked at the bottom of the source
+
+    2. (2013-08-25, https://dvdhrm.wordpress.com/2013/08/25/sane-session-switching/ ) is linked at the bottom of (1)
